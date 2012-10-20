@@ -28,7 +28,7 @@ class Server {
   const EXIT_SUCCESS = 0;
   const EXIT_FAILURE = 1;
 
-  private $commands = [];
+  private static $commands = [];
   private $funcs;
 
   private $fd;
@@ -38,6 +38,8 @@ class Server {
     $this->funcs = [];
 
     $this->fd = fopen(self::TMP_DIR.self::LOG_FILENAME, "w");
+
+    self::scanForCommands();
   }
 
 
