@@ -1,1 +1,1 @@
-ElephantOnCouch is a PHP Client for CouchDB. The library is still a work in progress, use at your own risk.
+A complete CouchDB server written in PHP. The library is still a work in progress, use at your own risk.

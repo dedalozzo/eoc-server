@@ -1,8 +1,8 @@
 {
     "name": "3f/elephantoncouch",
-    "description": "ElephantOnCouch is a PHP Client for CouchDB",
-    "keywords": ["couchdb", "client", "nosql"],
-    "homepage": "http://github.com/dedalozzo/ElephantOnCouch",
+    "description": "A complete CouchDB server written in PHP",
+    "keywords": ["couchdb", "server", "view server", "query server", "nosql"],
+    "homepage": "http://github.com/dedalozzo/EOCSvr",
     "type": "library",
     "license": "Apache License 2.0",
     "authors": [
@@ -14,10 +14,9 @@
     ],
     "require": {
         "php": ">=5.4.0",
-        "3f/rest": "dev-master",
         "3f/lint": "dev-master"
     },
     "autoload": {
-        "psr-0": {"ElephantOnCouch": "src/"}
+        "psr-0": {"": "src/"}
     }
 }

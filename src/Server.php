@@ -1,32 +1,34 @@
-#! /opt/local/bin/php
 <?php
 
-//! @file eocsvr.php
+//! @file Server.php
+//! @brief This file contains the Server class.
+//! @details
 //! @author Filippo F. Fadda
 
 
 //! @brief This class represents the implementation of a Query Server.
-//! @details CouchDB delegates computation of Views to external query servers. It communicates with them over standard
-//! input/output, using a very simple, line-based protocol. The default query server is written in JavaScript. You can
-//! use other languages by setting a MIME type in the language property of a design document or the Content-Type header
-//! of a temporary view. Design documents that do not specify a language property are assumed to be of type javascript,
-//! as are ad-hoc queries that are POSTed to _temp_view without a Content-Type header.<br />
+//! @details CouchDB delegates computation of views, shows, filters, etc. to external query servers. It communicates
+//! with them over standard input/output, using a very simple, line-based protocol. The default query server is written
+//! in JavaScript. You can use other languages by setting a MIME type in the language property of a design document or
+//! the Content-Type header of a temporary view. Design documents that do not specify a language property are assumed to
+//! be of type javascript, as are ad-hoc queries that are POSTed to _temp_view without a Content-Type header.<br />
 //! CouchDB launches the query server and starts sending commands. The server responds according to its evaluation
 //! of the commands.<br />
-//! To use
+//! To use this server just add to <i>local.ini</i> CouchDB configuration file the following line:
 //! @code
 //! [query_servers]
 //! php=/usr/bin/eocsvr.php
 //! @endcode
 //! @warning This class won't work with CGI because uses standard input (STDIN) and standard output (STDOUT).
 //! @see http://wiki.apache.org/couchdb/View_server
-class ElephantOnCouchServer {
+class Server {
   const TMP_DIR = "/tmp/";
   const LOG_FILENAME = "viewserver.log";
 
   const EXIT_SUCCESS = 0;
   const EXIT_FAILURE = 1;
 
+  private $commands = [];
   private $funcs;
 
   private $fd;
@@ -45,6 +47,21 @@ class ElephantOnCouchServer {
   }
 
 
+  //! @brief Scans the commands' directory.
+  //! @details CouchDB communicates with a Query Server over standard input/output. Each line represents a command.
+  //! Every single command must be interpreted and executed by a specific command handler. This method scans a directory
+  //! in search of every available handler.
+  private static function scanForCommands() {
+    foreach (glob(dirname(__DIR__)."Commands/*.php") as $fileName) {
+      //$className = preg_replace('/\.php\z/i', '', $fileName);
+      $className = "Commands\\".basename($fileName, ".php"); // Same like the above regular expression.
+
+      if (class_exists($className) && array_key_exists("Commands\\AbstractCommand", class_parents($className)))
+        self::$commands[$className::getNamen()] = $className;
+    }
+  }
+
+
   private static function arrayToObject($array) {
     return is_array($array) ? (object) array_map(__FUNCTION__, $array) : $array;
   }
@@ -60,25 +77,10 @@ class ElephantOnCouchServer {
 
       switch ($cmd) {
         case "reset":
-          $this->reset();
-          break;
-
         case "add_fun":
-          $this->addFun($arg);
-          break;
-
         case "map_doc":
-          $this->mapDoc($arg);
-          break;
-
         case "reduce":
-          $this->reduce($arg);
-          break;
-
         case "rereduce":
-          $this->rereduce($arg);
-          break;
-
         default:
           $this->logError("command_not_supported", "'$cmd' command is not supported by this ViewServer implementation");
           exit(self::EXIT_FAILURE);
@@ -91,7 +93,7 @@ class ElephantOnCouchServer {
 
 
   //! TODO
-  private final function writeln($str) {
+  public final function writeln($str) {
     // CouchDB's message terminator is: \n.
     fputs(STDOUT, $str."\n");
     flush();
@@ -100,10 +102,9 @@ class ElephantOnCouchServer {
 
   //! @brief Resets the internal state of the view server and makes it forget all previous input.
   //! @details CouchDB calls this function TODO
-  private final function reset() {
+  public final function resetFuncs() {
     unset($this->funcs);
     $this->funcs = [];
-    $this->writeln("true");
   }
 
 
@@ -111,10 +112,8 @@ class ElephantOnCouchServer {
   //! @details When creating a view, the view server gets sent the view function for evaluation. The view server should
   //! parse/compile/evaluate the function he receives to make it callable later. If this fails, the view server returns
   //! an error. CouchDB might store several functions before sending in any actual documents.
-  private final function addFun($fn) {
+  public final function addFunc($fn) {
     $this->funcs[] = $fn;
-    $this->writeln("true");
-    //$this->logError("eval_failed", "The function you provided is not a closure");
   }
 
 
@@ -218,20 +217,20 @@ class ElephantOnCouchServer {
   //! generate an error. CouchDB in fact doesn't expect a message when it sends <i>reset</i> or <i>add_fun</i> commands.
   //! For debugging purpose you can use the <i>log</i> method, to write messages in a log file of your choice.
   //! @param[in] string $msg The message to store into the log file.
-  private final function logMsg($msg) {
+  public final function logMsg($msg) {
     $this->writeln(json_encode(array("log", $msg)));
   }
 
 
   //! @brief In case of error CouchDB doesn't take any action. We simply notify the error, sending a special message to it.
-  private final function logError($error, $reason) {
+  public final function logError($error, $reason) {
     $msg = json_encode(array("error" => $error, "reason" => $reason));
     $this->writeln($msg);
   }
 
 
   //! @brief Use this method when you want log something in a log file of your choice.
-  private final function log($msg) {
+  public final function log($msg) {
     if (empty($msg))
       fputs($this->fd, "\n");
     else
@@ -239,10 +238,5 @@ class ElephantOnCouchServer {
   }
 
 }
-
-
-// Creates and starts the server instance.
-$svr = new ElephantOnCouchServer();
-$svr->run();
 
 ?>
