@@ -1,8 +1,12 @@
 <?php
+
 //! @file ResetCmd.php
 //! @brief This file contains the ResetCmd class.
 //! @details
 //! @author Filippo F. Fadda
+
+
+namespace Commands;
 
 
 //! @brief Resets the internal state of the server and makes it forget all previous input.

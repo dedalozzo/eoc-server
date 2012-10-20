@@ -1,8 +1,12 @@
 <?php
+
 //! @file AbstractCmd.php
 //! @brief This file contains the AbstractCmd class.
 //! @details
 //! @author Filippo F. Fadda
+
+
+namespace Commands;
 
 
 //! @brief This class defines the interface for all the concrete Server commands.
@@ -11,12 +15,12 @@
 //! @nosubgrouping
 abstract class AbstractCmd {
   protected $server;
-  protected $args;
+  protected $arg;
 
 
-  function __construct(Server $server, array $args = NULL) {
+  function __construct(\Server $server, $arg = "") {
     $this->server = $server;
-    $this->args = $args;
+    $this->arg = (string)$arg;
   }
 
 
