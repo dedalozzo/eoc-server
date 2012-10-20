@@ -24,7 +24,9 @@ class MapDocCmd extends AbstractCmd {
 
 
   public function execute() {
-    $doc = \Server::arrayToObject($this->args);
+    $this->server->log("MapDocCmd.execute()");
+
+    $doc = self::arrayToObject($this->args);
 
     // We use a closure here, so we can just expose the emit() function to the closure provided by the user. He will not
     // be able to call sum() or any other helper function, because they are all available as closures. We have also another
@@ -65,8 +67,8 @@ class MapDocCmd extends AbstractCmd {
         $this->server->log("Map: ".json_encode($map));
         $this->server->log("Partial Result: ".json_encode($result));
       }
-      else
-        throw new \Exception("The function you provided is not callable.");
+      //else
+        //throw new \Exception("The function you provided is not callable.");
 
       $this->server->log("----------------------------------------------------");
     }
@@ -75,6 +77,12 @@ class MapDocCmd extends AbstractCmd {
 
     // Sends mappings to CouchDB.
     $this->server->writeln(json_encode($result));
+  }
+
+
+  //! @brief TODO
+  public static function arrayToObject($array) {
+    return is_array($array) ? (object) array_map(__FUNCTION__, $array) : $array;
   }
 
 }

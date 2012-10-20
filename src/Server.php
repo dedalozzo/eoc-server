@@ -67,19 +67,15 @@ class Server {
 
 
   //! @brief TODO
-  public static function arrayToObject($array) {
-    return is_array($array) ? (object) array_map(__FUNCTION__, $array) : $array;
-  }
-
-
-  //! @brief TODO
   public final function run() {
-    $this->log("run");
+    $this->log("Server.run()");
+    $this->log("Total Commands: ".count(self::$commands));
+    $this->log("Total Functions: ".count($this->funcs));
 
     while ($line = trim(fgets(STDIN))) {
       @list($cmd, $args) = json_decode($line);
 
-      $this->log($cmd);
+      $this->log("Command: ".$cmd);
 
       if (array_key_exists($cmd, self::$commands)) {
         try {
@@ -113,7 +109,6 @@ class Server {
   public final function resetFuncs() {
     unset($this->funcs);
     $this->funcs = [];
-    $this->writeln("true");
   }
 
 
@@ -125,14 +120,16 @@ class Server {
 
   //! @brief TODO
   public final function addFunc($fn) {
+    $this->log("Function added");
     $this->funcs[] = $fn;
+    $this->log("Functions: ".json_encode($this->funcs));
   }
 
 
   //! @brief TODO
-  public final function sum() {
+  /*public final function sum() {
     //$this->log("sto facendo la somma");
-  }
+  }*/
 
 
   /*public final function count() {
@@ -154,7 +151,7 @@ class Server {
   //! generate an error. CouchDB in fact doesn't expect a message when it sends <i>reset</i> or <i>add_fun</i> commands.
   //! For debugging purpose you can use the <i>log</i> method, to write messages in a log file of your choice.
   //! @param[in] string $msg The message to store into the log file.
-  private final function logMsg($msg) {
+  public final function logMsg($msg) {
     $this->writeln(json_encode(array("log", $msg)));
   }
 

@@ -26,7 +26,10 @@ class AddFunCmd extends AbstractCmd {
 
 
   public function execute() {
-    Lint::checkSourceCode($this->args);
+    $this->server->log("AddFunCmd.execute()");
+    $this->server->log($this->args);
+
+    //Lint::checkSourceCode($this->args);
     $this->server->addFunc($this->args);
     $this->server->writeln("true");
   }
