@@ -28,7 +28,6 @@ class Server {
   const EXIT_SUCCESS = 0;
   const EXIT_FAILURE = 1;
 
-  private static $commands = [];
   private $funcs;
 
   private $fd;
@@ -38,8 +37,6 @@ class Server {
     $this->funcs = [];
 
     $this->fd = fopen(self::TMP_DIR.self::LOG_FILENAME, "w");
-
-    self::scanForCommands();
   }
 
 
@@ -49,28 +46,11 @@ class Server {
   }
 
 
-  //! @brief Scans the commands' directory.
-  //! @details CouchDB communicates with a Query Server over standard input/output. Each line represents a command.
-  //! Every single command must be interpreted and executed by a specific command handler. This method scans a directory
-  //! in search of every available handler.
-  private static function scanForCommands() {
-    foreach (glob(dirname(__DIR__)."Commands/*.php") as $fileName) {
-      //$className = preg_replace('/\.php\z/i', '', $fileName);
-      $className = "Commands\\".basename($fileName, ".php"); // Same like the above regular expression.
-
-      if (class_exists($className) && array_key_exists("Commands\\AbstractCommand", class_parents($className)))
-        self::$commands[$className::getName()] = $className;
-    }
-  }
-
-
-  //! @brief TODO
-  public static function arrayToObject($array) {
+  private static function arrayToObject($array) {
     return is_array($array) ? (object) array_map(__FUNCTION__, $array) : $array;
   }
 
 
-  //! @brief TODO
   public final function run() {
     $this->log("run");
 
@@ -79,53 +59,141 @@ class Server {
 
       $this->log($cmd);
 
-      if (array_key_exists($cmd, $this->commands)) {
-        try {
-          $className = $this->commands[$cmd];
-          $cmdObj = new $className($this, $arg);
-          $cmdObj->execute();
-        }
-        catch (Exception $e) {
-          $this->logError("eocsvr_error", $e->getMessage());
-          exit(Server::EXIT_FAILURE);
-        }
+      switch ($cmd) {
+        case "reset":
+          $this->reset();
+          break;
+
+        case "add_fun":
+          $this->addFun($arg);
+          break;
+
+        case "map_doc":
+          $this->mapDoc($arg);
+          break;
+
+        case "reduce":
+          $this->reduce($arg);
+          break;
+
+        case "rereduce":
+          $this->rereduce($arg);
+          break;
+
+        default:
+          $this->logError("command_not_supported", "'$cmd' command is not supported by this ViewServer implementation");
+          exit(self::EXIT_FAILURE);
+          break;
       }
-      else
-        $this->logError("eocsvr_error", "'$cmd' command is not supported.");
 
       fflush($this->fd);
     }
   }
 
 
-  //! @brief TODO
-  public final function writeln($str) {
+  //! TODO
+  private final function writeln($str) {
     // CouchDB's message terminator is: \n.
     fputs(STDOUT, $str."\n");
     flush();
   }
 
 
-  //! @brief TODO
-  public final function resetFuncs() {
+  //! @brief Resets the internal state of the view server and makes it forget all previous input.
+  //! @details CouchDB calls this function TODO
+  private final function reset() {
     unset($this->funcs);
     $this->funcs = [];
+    $this->writeln("true");
   }
 
 
   //! @brief TODO
-  public final function getFuncs() {
-    return $this->funcs;
-  }
-
-
-  //! @brief TODO
-  public final function addFunc($fn) {
+  //! @details When creating a view, the view server gets sent the view function for evaluation. The view server should
+  //! parse/compile/evaluate the function he receives to make it callable later. If this fails, the view server returns
+  //! an error. CouchDB might store several functions before sending in any actual documents.
+  private final function addFun($fn) {
     $this->funcs[] = $fn;
+    $this->writeln("true");
+    //$this->logError("eval_failed", "The function you provided is not a closure");
   }
 
 
-  //! @brief TODO
+  //! @brief Maps a document for every single View Function stored.
+  //! @details When the view function is stored in the view server, CouchDB starts sending in all the documents in the
+  //! database, one at a time. The view server calls the previously stored functions one after another with the document
+  //! and stores its result. When all functions have been called, the result is returned as a JSON string.
+  private final function mapDoc($doc) {
+    $doc = self::arrayToObject($doc);
+
+    // We use a closure here, so we can just expose the emit() function to the closure provided by the user. He will not
+    // be able to call sum() or any other helper function, because they are all available as closures. We have also another
+    // advantage here: the $map variable is defined inside mapDoc(), so we don't need to declare it as class member.
+    $emit = function($key, $value = NULL) use (&$map) {
+      $this->log("Key: $key");
+      $this->log("Value: $key");
+      $map[] = array($key, $value);
+    };
+
+    $closure = NULL; // This initialization is made just to prevent a lint error during development.
+
+    $result = []; // Every time we map a document against all the registered functions we must reset the result.
+
+    $this->log("====================================================");
+    $this->log("MAP DOC: $doc->title");
+    $this->log("====================================================");
+
+    foreach ($this->funcs as $fn) {
+      $map = []; // Every time we map a document against a function we must reset the map.
+
+      $this->log("Closure: $fn");
+
+      try {
+        // Here we call the closure function stored in the view. The $closure variable contains the function implementation
+        // provided by the user. You can have multiple views in a design document and for every single view you can have
+        // only one map function.
+        // The closure must be declared like:
+        //
+        //     function($doc) use ($emit) { ... };
+        //
+        // This technique let you use the syntax '$emit($key, $value);' to emit your record. The function doesn't return
+        // any value. You don't need to include any files since the closure's code is executed inside this method.
+        eval("\$closure = ".$fn);
+
+        if (is_callable($closure)) {
+          call_user_func($closure, $doc);
+          $result[] = $map;
+          $this->log("Map: ".json_encode($map));
+          $this->log("Partial Result: ".json_encode($result));
+        }
+        else
+          $this->logError("call_failed", "The function you provided is not callable");
+      }
+      catch (Exception $e) {
+        $this->logError("php_error", $e->getMessage()."\n".$e->getTraceAsString());
+        exit(self::EXIT_FAILURE);
+      }
+
+      $this->log("----------------------------------------------------");
+    }
+
+    $this->log("Final Result: ".json_encode($result));
+
+    // Sends mappings to CouchDB.
+    $this->writeln(json_encode($result));
+  }
+
+
+  private final function reduce() {
+    //$this->log("sto chiamando la reduce");
+  }
+
+
+  private final function rereduce() {
+    //$this->log("sto chiamando la rereduce");
+  }
+
+
   public final function sum() {
     //$this->log("sto facendo la somma");
   }
@@ -141,6 +209,7 @@ class Server {
   }*/
 
 
+
   //! @brief Tells CouchDB to append the specified message in the couch.log file.
   //! @details Any message will appear in the couch.log file, as follows:
   //!   [Tue, 22 May 2012 15:26:03 GMT] [info] [<0.80.0>] This is a log message
@@ -150,19 +219,20 @@ class Server {
   //! generate an error. CouchDB in fact doesn't expect a message when it sends <i>reset</i> or <i>add_fun</i> commands.
   //! For debugging purpose you can use the <i>log</i> method, to write messages in a log file of your choice.
   //! @param[in] string $msg The message to store into the log file.
-  public final function logMsg($msg) {
+  private final function logMsg($msg) {
     $this->writeln(json_encode(array("log", $msg)));
   }
 
 
   //! @brief In case of error CouchDB doesn't take any action. We simply notify the error, sending a special message to it.
-  public final function logError($error, $reason) {
-    $this->writeln(json_encode(array("error" => $error, "reason" => $reason)));
+  private final function logError($error, $reason) {
+    $msg = json_encode(array("error" => $error, "reason" => $reason));
+    $this->writeln($msg);
   }
 
 
   //! @brief Use this method when you want log something in a log file of your choice.
-  public final function log($msg) {
+  private final function log($msg) {
     if (empty($msg))
       fputs($this->fd, "\n");
     else
