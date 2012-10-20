@@ -24,7 +24,7 @@ class MapDocCmd extends AbstractCmd {
 
 
   public function execute() {
-    $doc = \Server::arrayToObject($this->arg);
+    $doc = \Server::arrayToObject($this->args);
 
     // We use a closure here, so we can just expose the emit() function to the closure provided by the user. He will not
     // be able to call sum() or any other helper function, because they are all available as closures. We have also another

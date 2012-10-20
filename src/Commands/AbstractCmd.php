@@ -15,12 +15,12 @@ namespace Commands;
 //! @nosubgrouping
 abstract class AbstractCmd {
   protected $server;
-  protected $arg;
+  protected $args;
 
 
-  function __construct(\Server $server, $arg = "") {
+  function __construct(\Server $server, $args) {
     $this->server = $server;
-    $this->arg = (string)$arg;
+    $this->args = $args;
   }
 
 
