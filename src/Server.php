@@ -46,11 +46,32 @@ class Server {
   }
 
 
+<<<<<<< HEAD
   private static function arrayToObject($array) {
+=======
+  //! @brief Scans the commands' directory.
+  //! @details CouchDB communicates with a Query Server over standard input/output. Each line represents a command.
+  //! Every single command must be interpreted and executed by a specific command handler. This method scans a directory
+  //! in search of every available handler.
+  private static function scanForCommands() {
+    foreach (glob(dirname(__DIR__)."Commands/*.php") as $fileName) {
+      //$className = preg_replace('/\.php\z/i', '', $fileName);
+      $className = "Commands\\".basename($fileName, ".php"); // Same like the above regular expression.
+
+      if (class_exists($className) && array_key_exists("Commands\\AbstractCommand", class_parents($className)))
+        self::$commands[$className::getName()] = $className;
+    }
+  }
+
+
+  //! @brief TODO
+  public static function arrayToObject($array) {
+>>>>>>> 164ac4a... A lot of changes.
     return is_array($array) ? (object) array_map(__FUNCTION__, $array) : $array;
   }
 
 
+  //! @brief TODO
   public final function run() {
     $this->log("run");
 
@@ -59,6 +80,7 @@ class Server {
 
       $this->log($cmd);
 
+<<<<<<< HEAD
       switch ($cmd) {
         case "reset":
           $this->reset();
@@ -84,24 +106,48 @@ class Server {
           $this->logError("command_not_supported", "'$cmd' command is not supported by this ViewServer implementation");
           exit(self::EXIT_FAILURE);
           break;
+=======
+      if (array_key_exists($cmd, $this->commands)) {
+        try {
+          $className = $this->commands[$cmd];
+          $cmdObj = new $className($this, $arg);
+          $cmdObj->execute();
+        }
+        catch (Exception $e) {
+          $this->logError("eocsvr_error", $e->getMessage());
+          exit(Server::EXIT_FAILURE);
+        }
+>>>>>>> 164ac4a... A lot of changes.
       }
+      else
+        $this->logError("eocsvr_error", "'$cmd' command is not supported.");
 
       fflush($this->fd);
     }
   }
 
 
+<<<<<<< HEAD
   //! TODO
   private final function writeln($str) {
+=======
+  //! @brief TODO
+  public final function writeln($str) {
+>>>>>>> 164ac4a... A lot of changes.
     // CouchDB's message terminator is: \n.
     fputs(STDOUT, $str."\n");
     flush();
   }
 
 
+<<<<<<< HEAD
   //! @brief Resets the internal state of the view server and makes it forget all previous input.
   //! @details CouchDB calls this function TODO
   private final function reset() {
+=======
+  //! @brief TODO
+  public final function resetFuncs() {
+>>>>>>> 164ac4a... A lot of changes.
     unset($this->funcs);
     $this->funcs = [];
     $this->writeln("true");
@@ -109,6 +155,7 @@ class Server {
 
 
   //! @brief TODO
+<<<<<<< HEAD
   //! @details When creating a view, the view server gets sent the view function for evaluation. The view server should
   //! parse/compile/evaluate the function he receives to make it callable later. If this fails, the view server returns
   //! an error. CouchDB might store several functions before sending in any actual documents.
@@ -181,19 +228,20 @@ class Server {
 
     // Sends mappings to CouchDB.
     $this->writeln(json_encode($result));
+=======
+  public final function getFuncs() {
+    return $this->funcs;
+>>>>>>> 164ac4a... A lot of changes.
   }
 
 
-  private final function reduce() {
-    //$this->log("sto chiamando la reduce");
+  //! @brief TODO
+  public final function addFunc($fn) {
+    $this->funcs[] = $fn;
   }
 
 
-  private final function rereduce() {
-    //$this->log("sto chiamando la rereduce");
-  }
-
-
+  //! @brief TODO
   public final function sum() {
     //$this->log("sto facendo la somma");
   }
@@ -207,7 +255,6 @@ class Server {
   /*public final function stats() {
     //$this->log("sto facendo la somma");
   }*/
-
 
 
   //! @brief Tells CouchDB to append the specified message in the couch.log file.
@@ -225,9 +272,14 @@ class Server {
 
 
   //! @brief In case of error CouchDB doesn't take any action. We simply notify the error, sending a special message to it.
+<<<<<<< HEAD
   private final function logError($error, $reason) {
     $msg = json_encode(array("error" => $error, "reason" => $reason));
     $this->writeln($msg);
+=======
+  public final function logError($error, $reason) {
+    $this->writeln(json_encode(array("error" => $error, "reason" => $reason)));
+>>>>>>> 164ac4a... A lot of changes.
   }
 
 
