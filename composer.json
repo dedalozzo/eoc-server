@@ -1,5 +1,5 @@
 {
-    "name": "3f/elephantoncouch",
+    "name": "3f/eocsvr",
     "description": "A complete CouchDB server written in PHP",
     "keywords": ["couchdb", "server", "view server", "query server", "nosql"],
     "homepage": "http://github.com/dedalozzo/EOCSvr",
