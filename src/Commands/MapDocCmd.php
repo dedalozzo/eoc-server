@@ -24,7 +24,7 @@ class MapDocCmd extends AbstractCmd {
 
 
   public function execute() {
-    $this->server->log("MapDocCmd.execute()");
+    $this->server->logMsg("MapDocCmd.execute()");
 
     $doc = self::arrayToObject($this->args);
 
@@ -32,8 +32,8 @@ class MapDocCmd extends AbstractCmd {
     // be able to call sum() or any other helper function, because they are all available as closures. We have also another
     // advantage here: the $map variable is defined inside execute(), so we don't need to declare it as class member.
     $emit = function($key, $value = NULL) use (&$map) {
-      $this->server->log("Key: $key");
-      $this->server->log("Value: $key");
+      $this->server->logMsg("Key: $key");
+      $this->server->logMsg("Value: $key");
       $map[] = array($key, $value);
     };
 
@@ -41,14 +41,14 @@ class MapDocCmd extends AbstractCmd {
 
     $result = []; // Every time we map a document against all the registered functions we must reset the result.
 
-    $this->server->log("====================================================");
-    $this->server->log("MAP DOC: $doc->title");
-    $this->server->log("====================================================");
+    $this->server->logMsg("====================================================");
+    $this->server->logMsg("MAP DOC: $doc->title");
+    $this->server->logMsg("====================================================");
 
     foreach ($this->server->getFuncs() as $fn) {
       $map = []; // Every time we map a document against a function we must reset the map.
 
-      $this->server->log("Closure: $fn");
+      $this->server->logMsg("Closure: $fn");
 
       // Here we call the closure function stored in the view. The $closure variable contains the function implementation
       // provided by the user. You can have multiple views in a design document and for every single view you can have
@@ -64,16 +64,16 @@ class MapDocCmd extends AbstractCmd {
       if (is_callable($closure)) {
         call_user_func($closure, $doc);
         $result[] = $map;
-        $this->server->log("Map: ".json_encode($map));
-        $this->server->log("Partial Result: ".json_encode($result));
+        $this->server->logMsg("Map: ".json_encode($map));
+        $this->server->logMsg("Partial Result: ".json_encode($result));
       }
       //else
         //throw new \Exception("The function you provided is not callable.");
 
-      $this->server->log("----------------------------------------------------");
+      $this->server->logMsg("----------------------------------------------------");
     }
 
-    $this->server->log("Final Result: ".json_encode($result));
+    $this->server->logMsg("Final Result: ".json_encode($result));
 
     // Sends mappings to CouchDB.
     $this->server->writeln(json_encode($result));

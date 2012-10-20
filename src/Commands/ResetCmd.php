@@ -20,12 +20,8 @@ class ResetCmd extends AbstractCmd {
 
 
   public function execute() {
-    $this->server->log("ResetCmd.execute()");
-
+    $this->server->logMsg("ResetCmd.execute()");
     $this->server->resetFuncs();
-
-    $this->server->log(json_encode($this->server->getFuncs()));
-
     $this->server->writeln("true");
   }
 }

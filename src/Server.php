@@ -30,18 +30,21 @@ class Server {
   const EXIT_SUCCESS = 0;
   const EXIT_FAILURE = 1;
 
-  private static $commands = [];
-  private $funcs;
-
   private $fd;
+
+  private static $commands = [];
+
+  private $funcs;
 
 
   public final function __construct() {
-    $this->funcs = [];
-
+    // Creates the log file descriptor.
     $this->fd = fopen(self::TMP_DIR.self::LOG_FILENAME, "w");
 
+    // Get all available commands.
     self::scanForCommands();
+
+    $this->funcs = [];
   }
 
 
@@ -66,38 +69,33 @@ class Server {
   }
 
 
-  //! @brief TODO
+  //! @brief Starts the server.
   public final function run() {
-    $this->log("Server.run()");
-    $this->log("Total Commands: ".count(self::$commands));
-    $this->log("Total Functions: ".count($this->funcs));
+    $this->logMsg("Server.run()");
 
     while ($line = trim(fgets(STDIN))) {
       @list($cmd, $args) = json_decode($line);
 
-      $this->log("Command: ".$cmd);
-
       if (array_key_exists($cmd, self::$commands)) {
         try {
           $className = self::$commands[$cmd];
-          $this->log($className);
           $cmdObj = new $className($this, $args);
           $cmdObj->execute();
         }
         catch (Exception $e) {
-          $this->logError(self::EOCSVR_ERROR, $e->getMessage());
+          $this->sendError(self::EOCSVR_ERROR, $e->getMessage());
           exit(Server::EXIT_FAILURE);
         }
       }
       else
-        $this->logError(self::EOCSVR_ERROR, "'$cmd' command is not supported.");
+        $this->sendError(self::EOCSVR_ERROR, "'$cmd' command is not supported.");
 
       fflush($this->fd);
     }
   }
 
 
-  //! @brief TODO
+  //! @brief Sends a response to CouchDB via standard output.
   public final function writeln($str) {
     // CouchDB's message terminator is: \n.
     fputs(STDOUT, $str."\n");
@@ -105,24 +103,22 @@ class Server {
   }
 
 
-  //! @brief TODO
+  //! @brief Resets the array of the functions.
   public final function resetFuncs() {
     unset($this->funcs);
     $this->funcs = [];
   }
 
 
-  //! @brief TODO
+  //! @brief Returns the array of the functions.
   public final function getFuncs() {
     return $this->funcs;
   }
 
 
-  //! @brief TODO
+  //! @brief Add the given function to the internal functions' list.
   public final function addFunc($fn) {
-    $this->log("Function added");
     $this->funcs[] = $fn;
-    $this->log("Functions: ".json_encode($this->funcs));
   }
 
 
@@ -132,11 +128,13 @@ class Server {
   }*/
 
 
+  //! @brief TODO
   /*public final function count() {
     //$this->log("sto facendo la somma");
   }*/
 
 
+  //! @brief TODO
   /*public final function stats() {
     //$this->log("sto facendo la somma");
   }*/
@@ -151,19 +149,19 @@ class Server {
   //! generate an error. CouchDB in fact doesn't expect a message when it sends <i>reset</i> or <i>add_fun</i> commands.
   //! For debugging purpose you can use the <i>log</i> method, to write messages in a log file of your choice.
   //! @param[in] string $msg The message to store into the log file.
-  public final function logMsg($msg) {
+  public final function sendMsg($msg) {
     $this->writeln(json_encode(array("log", $msg)));
   }
 
 
   //! @brief In case of error CouchDB doesn't take any action. We simply notify the error, sending a special message to it.
-  public final function logError($error, $reason) {
+  public final function sendError($error, $reason) {
     $this->writeln(json_encode(array("error" => $error, "reason" => $reason)));
   }
 
 
   //! @brief Use this method when you want log something in a log file of your choice.
-  public final function log($msg) {
+  public final function logMsg($msg) {
     if (empty($msg))
       fputs($this->fd, "\n");
     else

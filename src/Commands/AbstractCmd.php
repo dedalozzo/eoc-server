@@ -18,7 +18,7 @@ abstract class AbstractCmd {
   protected $args;
 
 
-  function __construct(\Server &$server, $args) {
+  function __construct(\Server $server, $args) {
     $this->server = $server;
     $this->args = $args;
   }
