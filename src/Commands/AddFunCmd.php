@@ -12,7 +12,8 @@ namespace Commands;
 use Lint\Lint;
 
 
-//! @brief TODO
+//! @brief Evaluates the function received from CouchDB, cheks for syntax errors and finally stores the function
+//! implementation, so CouchDB can call it later.
 //! @details When creating a view, the view server gets sent the view function for evaluation. The view server should
 //! parse/compile/evaluate the function he receives to make it callable later. If this fails, the view server returns
 //! an error. CouchDB might store several functions before sending in any actual documents.
