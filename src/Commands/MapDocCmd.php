@@ -31,7 +31,7 @@ class MapDocCmd extends AbstractCmd {
     // We use a closure here, so we can just expose the emit() function to the closure provided by the user. He will not
     // be able to call sum() or any other helper function, because they are all available as closures. We have also another
     // advantage here: the $map variable is defined inside execute(), so we don't need to declare it as class member.
-    $emit = function($key, $value = NULL) use (&$map) {
+    $emit = function($key  , $value = NULL) use (&$map) {
       $this->server->logMsg("Key: $key");
       $this->server->logMsg("Value: $key");
       $map[] = array($key, $value);
@@ -80,7 +80,8 @@ class MapDocCmd extends AbstractCmd {
   }
 
 
-  //! @brief TODO
+  // @brief Converts the array to an object.
+  // @return object
   public static function arrayToObject($array) {
     return is_array($array) ? (object) array_map(__FUNCTION__, $array) : $array;
   }

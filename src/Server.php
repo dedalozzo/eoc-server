@@ -7,18 +7,6 @@
 
 
 //! @brief This class represents the implementation of a Query Server.
-//! @details CouchDB delegates computation of views, shows, filters, etc. to external query servers. It communicates
-//! with them over standard input/output, using a very simple, line-based protocol. The default query server is written
-//! in JavaScript. You can use other languages by setting a MIME type in the language property of a design document or
-//! the Content-Type header of a temporary view. Design documents that do not specify a language property are assumed to
-//! be of type javascript, as are ad-hoc queries that are POSTed to _temp_view without a Content-Type header.<br />
-//! CouchDB launches the query server and starts sending commands. The server responds according to its evaluation
-//! of the commands.<br />
-//! To use this server just add to <i>local.ini</i> CouchDB configuration file the following line:
-//! @code
-//! [query_servers]
-//! php=/usr/bin/eocsvr.php
-//! @endcode
 //! @warning This class won't work with CGI because uses standard input (STDIN) and standard output (STDOUT).
 //! @see http://wiki.apache.org/couchdb/View_server
 class Server {
@@ -71,6 +59,7 @@ class Server {
 
   //! @brief Starts the server.
   public final function run() {
+
     $this->logMsg("Server.run()");
 
     while ($line = trim(fgets(STDIN))) {
@@ -92,10 +81,13 @@ class Server {
 
       fflush($this->fd);
     }
+
+
   }
 
 
   //! @brief Sends a response to CouchDB via standard output.
+  //! @param[in] string $str The string to send.
   public final function writeln($str) {
     // CouchDB's message terminator is: \n.
     fputs(STDOUT, $str."\n");
@@ -117,27 +109,10 @@ class Server {
 
 
   //! @brief Add the given function to the internal functions' list.
+  //! @param[in] string $fn The function implementation.
   public final function addFunc($fn) {
     $this->funcs[] = $fn;
   }
-
-
-  //! @brief TODO
-  /*public final function sum() {
-    //$this->log("sto facendo la somma");
-  }*/
-
-
-  //! @brief TODO
-  /*public final function count() {
-    //$this->log("sto facendo la somma");
-  }*/
-
-
-  //! @brief TODO
-  /*public final function stats() {
-    //$this->log("sto facendo la somma");
-  }*/
 
 
   //! @brief Tells CouchDB to append the specified message in the couch.log file.
@@ -155,12 +130,15 @@ class Server {
 
 
   //! @brief In case of error CouchDB doesn't take any action. We simply notify the error, sending a special message to it.
+  //! @param[in] string $error The error keyword.
+  //! @param[in] string $reason The error message.
   public final function sendError($error, $reason) {
     $this->writeln(json_encode(array("error" => $error, "reason" => $reason)));
   }
 
 
   //! @brief Use this method when you want log something in a log file of your choice.
+  //! @param[in] string $msg The log message to send CouchDB.
   public final function logMsg($msg) {
     if (empty($msg))
       fputs($this->fd, "\n");
