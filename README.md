@@ -49,7 +49,7 @@ You are finally ready to configure CouchDB to use EOCSvr. At this point you just
 
 ``` sh
 [query_servers]
-php=/usr/bin/eocsvr.php
+php=/opt/local/share/couchdb/server/eocsvr/eocsvr.php
 ```
 
 
