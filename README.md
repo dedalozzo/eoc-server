@@ -62,7 +62,7 @@ PHP 5.4.7 or above.
 
 Authors
 -------
-Filippo F. Fadda - <filippo.fadda@programmazione.it> - <http://www.linkedin.com/in/filippofaddan>
+Filippo F. Fadda - <filippo.fadda@programmazione.it> - <http://www.linkedin.com/in/filippofadda>
 
 
 License
