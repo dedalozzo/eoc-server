@@ -6,6 +6,7 @@
 //! @author Filippo F. Fadda
 
 
+//! @brief This namespace contains all the available concrete commands.
 namespace Commands;
 
 
@@ -18,6 +19,9 @@ abstract class AbstractCmd {
   protected $args;
 
 
+  //! @brief Creates an instance of a concrete command.
+  //! @param[in] Server $server An instance of Server class.
+  //! @param[in] array $args An array of arguments.
   function __construct(\Server $server, $args) {
     $this->server = $server;
     $this->args = $args;

@@ -55,6 +55,12 @@ php=/opt/local/share/couchdb/server/eocsvr/eocsvr.php
 ```
 
 
+Usage
+-----
+To benefit of EOCSvr you must use [ElephantOnCouch](https://github.com/dedalozzo/ElephantOnCouch), a PHP client for CouchDB.
+Using [ElephantOnCouch](https://github.com/dedalozzo/ElephantOnCouch) you can interact with CouchDB, and you can write your views directly in PHP.
+
+
 Requirements
 ------------
 PHP 5.4.7 or above.
