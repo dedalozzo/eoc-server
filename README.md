@@ -11,8 +11,8 @@ CouchDB launches the query server and starts sending commands. The server respon
 of the commands.
 
 
-Installation of Composer
-------------------------
+Composer Installation
+---------------------
 
 To install EOCSvr, you first need to install [Composer](http://getcomposer.org/), a Package Manager for PHP, following those few [steps](http://getcomposer.org/doc/00-intro.md#installation-nix):
 
@@ -26,8 +26,8 @@ You can run this command to easily access composer from anywhere on your system:
 sudo mv composer.phar /usr/local/bin/composer
 ```
 
-Installation of EOCSvr
-----------------------
+EOCSvr Installation
+-------------------
 Once you have installed Composer, it's easy install OECSvr.
 
 1. Move into the directory where is located `main.js` file:
@@ -41,7 +41,7 @@ If you are using MacPorts on Mac OS X, you can find it on `/opt/local/share/couc
 sudo composer create-project 3f/eocsvr
 ```
 
-Configuration of CouchDB
+CouchDB Configuration
 ----------------------------------
 You are finally ready to configure CouchDB to use EOCSvr. At this point you just need to edit `local.ini` configuration file.
 
