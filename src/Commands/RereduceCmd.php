@@ -10,12 +10,13 @@ namespace Commands;
 
 
 //! @brief The map command (MapCmd) generates a set of key/value pairs, which can then optionally be reduced to single
-//! value or to a group of values by the reduce command (ReduceCmd). The rereduce command (Rereduce) try to call your
+//! value or to a group of values by the reduce command (ReduceCmd). The rereduce command (RereduceCmd) try to call your
 //! reduce function recursively on its own input.
 //! @details The reduce step primarily involves working with keys and values, not document IDs. Either a single computed
 //! reduction of all values will be produced, or reductions of values grouped by keys, will ultimately be produced.
-//! Grouping is controlled by parameters passed to your view, not by the reduce function itself.
-//! @details The argument provided by CouchDB has the following structure:
+//! Grouping is controlled by parameters passed to your view, not by the reduce function itself.<br /><br />
+//! The argument provided by CouchDB has the following structure:
+//! @code
 //! Array
 //! (
 //!     [0] => Array
@@ -34,6 +35,7 @@ namespace Commands;
 //!         [2] => 48324
 //!     )
 //! )
+//! @endcode
 class RereduceCmd extends AbstractCmd {
   const REREDUCE = "rereduce";
 

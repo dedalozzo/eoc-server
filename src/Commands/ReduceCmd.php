@@ -16,8 +16,9 @@ use Lint\Lint;
 //! value or to a group of values by the reduce command (ReduceCmd). So that's the purpose of this class.
 //! @details The reduce step primarily involves working with keys and values, not document IDs. Either a single computed
 //! reduction of all values will be produced, or reductions of values grouped by keys, will ultimately be produced.
-//! Grouping is controlled by parameters passed to your view, not by the reduce function itself.<br />
-//! @details The argument provided by CouchDB has the following structure:
+//! Grouping is controlled by parameters passed to your view, not by the reduce function itself.<br /><br />
+//! The argument provided by CouchDB has the following structure:
+//! @code
 //! Array
 //! (
 //!     [0] => Array
@@ -51,6 +52,7 @@ use Lint\Lint;
 //!         )
 //!     )
 //! )
+//! @endcode
 class ReduceCmd extends AbstractCmd {
   const REDUCE = "reduce";
 

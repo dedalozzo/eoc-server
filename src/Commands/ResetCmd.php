@@ -11,6 +11,7 @@ namespace Commands;
 
 //! @brief Resets the internal state of the server and makes it forget all previous input.
 //! @details The argument provided by CouchDB has the following structure:
+//! @code
 //! Array
 //! (
 //!     [0] => Array
@@ -19,6 +20,7 @@ namespace Commands;
 //!         [timeout] => 5000
 //!     )
 //! )
+//! @endcode
 class ResetCmd extends AbstractCmd {
   const RESET = "reset";
 

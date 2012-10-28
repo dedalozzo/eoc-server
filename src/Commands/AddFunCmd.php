@@ -16,8 +16,9 @@ use Lint\Lint;
 //! implementation, so CouchDB can call it later.
 //! @details When creating a view, the view server gets sent the view function for evaluation. The view server should
 //! parse/compile/evaluate the function he receives to make it callable later. If this fails, the view server returns
-//! an error. CouchDB might store several functions before sending in any actual documents.<br />
+//! an error. CouchDB might store several functions before sending in any actual documents.<br /><br />
 //! The argument provided by CouchDB has the following structure:
+//! @code
 //! Array
 //! (
 //!     [0] => function($doc) use ($emit) {
@@ -25,7 +26,7 @@ use Lint\Lint;
 //!                $emit($doc->contributorName, $doc->idItem);
 //!            };
 //! )
-
+//! @endcode
 class AddFunCmd extends AbstractCmd {
   const ADD_FUN = "add_fun";
 

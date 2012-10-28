@@ -13,8 +13,9 @@ namespace Commands;
 //! @brief Maps a document against every single map function stored into the server.
 //! @details When the view function is stored in the server, CouchDB starts sending in all the documents in the
 //! database, one at a time. The server calls the previously stored functions one after another with the document
-//! and stores its result. When all functions have been called, the result is returned as a JSON string.<br />
+//! and stores its result. When all functions have been called, the result is returned as a JSON string.<br /><br />
 //! The argument provided by CouchDB has the following structure:
+//! @code
 //! Array
 //! (
 //!     [0] => Array
@@ -25,6 +26,7 @@ namespace Commands;
 //!         [title] => Visual Modelling with Rational Rose 2000 and UML
 //!     )
 //! )
+//! @endcode
 class MapDocCmd extends AbstractCmd {
   const MAP_DOC = "map_doc";
 
