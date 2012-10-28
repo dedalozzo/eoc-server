@@ -13,27 +13,33 @@ namespace Commands;
 //! @brief Maps a document against every single map function stored into the server.
 //! @details When the view function is stored in the server, CouchDB starts sending in all the documents in the
 //! database, one at a time. The server calls the previously stored functions one after another with the document
-//! and stores its result. When all functions have been called, the result is returned as a JSON string.
+//! and stores its result. When all functions have been called, the result is returned as a JSON string.<br />
+//! The argument provided by CouchDB has the following structure:
+//! Array
+//! (
+//!     [0] => Array
+//!     (
+//!         [_id] => 32012
+//!         [_rev] => 1-f19919e544340438babac6cc86ec61d5
+//!         [idItem] => 32012
+//!         [title] => Visual Modelling with Rational Rose 2000 and UML
+//!     )
+//! )
 class MapDocCmd extends AbstractCmd {
   const MAP_DOC = "map_doc";
 
 
-  static public function getName() {
+  public final static function getName() {
     return self::MAP_DOC;
   }
 
 
-  public function execute() {
-    $this->server->logMsg("MapDocCmd.execute()");
+  public final function execute() {
+    $doc = self::arrayToObject(reset($this->args));
 
-    $doc = self::arrayToObject($this->args);
-
-    // We use a closure here, so we can just expose the emit() function to the closure provided by the user. He will not
-    // be able to call sum() or any other helper function, because they are all available as closures. We have also another
-    // advantage here: the $map variable is defined inside execute(), so we don't need to declare it as class member.
-    $emit = function($key  , $value = NULL) use (&$map) {
-      $this->server->logMsg("Key: $key");
-      $this->server->logMsg("Value: $key");
+    // We use a closure here, so we can just expose the emit() function to the closure provided by the user. We have
+    // another advantage here: the $map variable is defined inside execute(), so we don't need to declare it as class member.
+    $emit = function($key = NULL, $value = NULL) use (&$map) {
       $map[] = array($key, $value);
     };
 
@@ -41,14 +47,8 @@ class MapDocCmd extends AbstractCmd {
 
     $result = []; // Every time we map a document against all the registered functions we must reset the result.
 
-    $this->server->logMsg("====================================================");
-    $this->server->logMsg("MAP DOC: $doc->title");
-    $this->server->logMsg("====================================================");
-
     foreach ($this->server->getFuncs() as $fn) {
       $map = []; // Every time we map a document against a function we must reset the map.
-
-      $this->server->logMsg("Closure: $fn");
 
       // Here we call the closure function stored in the view. The $closure variable contains the function implementation
       // provided by the user. You can have multiple views in a design document and for every single view you can have
@@ -64,16 +64,10 @@ class MapDocCmd extends AbstractCmd {
       if (is_callable($closure)) {
         call_user_func($closure, $doc);
         $result[] = $map;
-        $this->server->logMsg("Map: ".json_encode($map));
-        $this->server->logMsg("Partial Result: ".json_encode($result));
       }
-      //else
-        //throw new \Exception("The function you provided is not callable.");
-
-      $this->server->logMsg("----------------------------------------------------");
+      else
+        throw new \Exception("The function you provided is not callable.");
     }
-
-    $this->server->logMsg("Final Result: ".json_encode($result));
 
     // Sends mappings to CouchDB.
     $this->server->writeln(json_encode($result));
@@ -82,8 +76,8 @@ class MapDocCmd extends AbstractCmd {
 
   // @brief Converts the array to an object.
   // @return object
-  public static function arrayToObject($array) {
-    return is_array($array) ? (object) array_map(__FUNCTION__, $array) : $array;
+  public final static function arrayToObject($array) {
+    return is_array($array) ? (object)array_map(__METHOD__, $array) : $array;
   }
 
 }

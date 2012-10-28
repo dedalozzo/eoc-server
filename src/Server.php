@@ -11,23 +11,29 @@
 //! @see http://wiki.apache.org/couchdb/View_server
 class Server {
   const TMP_DIR = "/tmp/";
-  const LOG_FILENAME = "viewserver.log";
+  const LOG_FILENAME = "oec.log";
 
   const EOCSVR_ERROR = "eocsvr_error";
 
   const EXIT_SUCCESS = 0;
   const EXIT_FAILURE = 1;
 
-  private $fd;
+  private $debug; // When true we are debugging.
+  private $fd; // Stores the log file descriptor.
 
-  private static $commands = [];
+  private static $commands = []; // Stores the commands' list.
 
-  private $funcs;
+  private $funcs; // Stores the functions' list.
+
+  private $reduceLimit = 1;
+  private $timeout = 5000;
 
 
-  public final function __construct() {
+  public final function __construct($debug = FALSE) {
+    $this->debug = (bool)$debug; // This is immutable.
+
     // Creates the log file descriptor.
-    $this->fd = fopen(self::TMP_DIR.self::LOG_FILENAME, "w");
+    if ($this->debug) $this->fd = fopen(self::TMP_DIR.self::LOG_FILENAME, "w");
 
     // Get all available commands.
     self::scanForCommands();
@@ -37,8 +43,7 @@ class Server {
 
 
   public final function __destruct() {
-    fflush($this->fd);
-    fclose($this->fd);
+    if ($this->debug) fclose($this->fd);
   }
 
 
@@ -46,7 +51,7 @@ class Server {
   //! @details CouchDB communicates with a Query Server over standard input/output. Each line represents a command.
   //! Every single command must be interpreted and executed by a specific command handler. This method scans a directory
   //! in search of every available handler.
-  private static function scanForCommands() {
+  private final static function scanForCommands() {
     foreach (glob(dirname(__DIR__)."/src/Commands/*.php") as $fileName) {
       //$className = preg_replace('/\.php\z/i', '', $fileName);
       $className = "Commands\\".basename($fileName, ".php"); // Same like the above regular expression.
@@ -63,7 +68,16 @@ class Server {
     $this->logMsg("Server.run()");
 
     while ($line = trim(fgets(STDIN))) {
-      @list($cmd, $args) = json_decode($line);
+      // We decode the JSON string into an array. Returned objects will be converted into associative arrays.
+      $args = json_decode($line, TRUE);
+
+      // We know that the first part of the JSON encoded string represent the command.
+      // Only the command implementation knows which and how many arguments are provided for the command itself.
+      $cmd = array_shift($args);
+
+      //$this->logMsg("Command: $cmd");
+      //$this->logMsg("Type: ".gettype($args));
+      //$this->logMsg("Arguments: ".json_encode($args));
 
       if (array_key_exists($cmd, self::$commands)) {
         try {
@@ -81,8 +95,6 @@ class Server {
 
       fflush($this->fd);
     }
-
-
   }
 
 
@@ -139,11 +151,27 @@ class Server {
 
   //! @brief Use this method when you want log something in a log file of your choice.
   //! @param[in] string $msg The log message to send CouchDB.
-  public final function logMsg($msg) {
-    if (empty($msg))
-      fputs($this->fd, "\n");
-    else
-      fputs($this->fd, date("Y-m-d H:i:s")." - ".$msg."\n");
+  public final function logMsg($msg = "") {
+    if ($this->debug) {
+        if (empty($msg))
+        fputs($this->fd, "\n");
+      else
+        fputs($this->fd, date("Y-m-d H:i:s")." - ".$msg."\n");
+
+      fflush($this->fd);
+    }
+  }
+
+
+  //! @brief Sets the limit of times a reduce function can be called.
+  public final function setReduceLimit($value) {
+    $this->reduceLimit = (integer)$value;
+  }
+
+
+  //! @brief Sets the timeout for the reduce process.
+  public final function setTimeout($value) {
+    $this->timeout = (integer)$value;
   }
 
 }

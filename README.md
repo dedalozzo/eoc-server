@@ -43,12 +43,13 @@ sudo composer create-project 3f/eocsvr
 
 CouchDB Configuration
 ----------------------------------
-You are finally ready to configure CouchDB to use EOCSvr. At this point you just need to edit `local.ini` configuration file.
+You are finally ready to configure CouchDB to use EOCSvr. At this point you just need to edit `local.ini` configuration file:
 
 ``` sh
 vim /opt/local/etc/couchdb/local.ini
 ```
 
+Then, under the `[query_servers]` section, add the following line:
 ``` sh
 [query_servers]
 php=/opt/local/share/couchdb/server/eocsvr/eocsvr.php

@@ -30,7 +30,7 @@ abstract class AbstractCmd {
 
   //! @brief Returns the command's name.
   //! @return string
-  abstract static public function getName();
+  abstract public static function getName();
 
 
   //! @brief Executes the command.
