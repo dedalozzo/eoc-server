@@ -127,6 +127,27 @@ class Server {
   }
 
 
+  public function reduce($funcs, $keys, $values, $rereduce) {
+    $closure = NULL; // This initialization is made just to prevent a lint error during development.
+
+    $reductions = [];
+
+    // Executes the reductions.
+    foreach ($funcs as $fn) {
+      eval("\$closure = ".$fn);
+
+      if (is_callable($closure))
+        $reductions[] = call_user_func($closure, $keys, $values, $rereduce);
+      else
+        throw new \Exception("The function you provided is not callable.");
+
+    }
+
+    // Sends mappings to CouchDB.
+    $this->writeln("[true,".json_encode($reductions)."]");
+  }
+
+
   //! @brief Tells CouchDB to append the specified message in the couch.log file.
   //! @details Any message will appear in the couch.log file, as follows:
   //!   [Tue, 22 May 2012 15:26:03 GMT] [info] [<0.80.0>] This is a log message

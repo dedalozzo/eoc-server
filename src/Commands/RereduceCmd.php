@@ -35,8 +35,6 @@ namespace Commands;
 //!     )
 //! )
 class RereduceCmd extends AbstractCmd {
-  use \ReduceTrait;
-
   const REREDUCE = "rereduce";
 
 
@@ -49,11 +47,7 @@ class RereduceCmd extends AbstractCmd {
     // Extracts functions and values from the arguments array.
     @list($funcs, $values) = $this->args;
 
-    // Checks every function for syntax errors. We do the check only here to not repeat in rereduce.
-    foreach ($funcs as $fn)
-      Lint::checkSourceCode($fn);
-
-    $this->reduce($funcs, NULL, $values, TRUE);
+    $this->server->reduce($funcs, NULL, $values, TRUE);
   }
 
 }

@@ -52,8 +52,6 @@ use Lint\Lint;
 //!     )
 //! )
 class ReduceCmd extends AbstractCmd {
-  use \ReduceTrait;
-
   const REDUCE = "reduce";
 
 
@@ -66,6 +64,9 @@ class ReduceCmd extends AbstractCmd {
     // Extracts functions and pairs (keys, values) from the arguments array.
     @list($funcs, $pairs) = $this->args;
 
+    $keys = [];
+    $values = [];
+
     // Extracts keys and values.
     foreach ($pairs as $pair) {
       $keys[] = $pair[0];
@@ -76,7 +77,7 @@ class ReduceCmd extends AbstractCmd {
     foreach ($funcs as $fn)
       Lint::checkSourceCode($fn);
 
-    $this->reduce($funcs, $keys, $values, FALSE);
+    $this->server->reduce($funcs, $keys, $values, FALSE);
   }
 
 }
