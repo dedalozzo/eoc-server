@@ -1,14 +1,13 @@
 EOCSvr - A complete CouchDB Query Server written in PHP
 =======================================================
 EOCSvr stands for ElephantOnCouch Server. EOCSvr is a CouchDB's Query Server implementation made in PHP programming language.
-
 CouchDB delegates computation of views, shows, filters, etc. to external query servers. It communicates with them over
-standard input/output, using a very simple, line-based protocol. The default query server is written in JavaScript.
-You can use other languages by setting a MIME type in the language property of a design document or the Content-Type
-header of a temporary view. Design documents that do not specify a language property are assumed to be of type JavaScript,
-as are ad-hoc queries that are POSTed to _temp_view without a Content-Type header.
-CouchDB launches the query server and starts sending commands. The server responds according to its evaluation
-of the commands.
+standard input/output, using a very simple, line-based protocol. CouchDB launches the query server and starts sending commands.
+The server responds according to its evaluation of the commands.
+The default query server is written in JavaScript. You can use other languages by setting a MIME type in the language
+property of a design document or the Content-Type header of a temporary view. Design documents that do not specify a language
+property are assumed to be of type JavaScript, as are ad-hoc queries that are POSTed to temporary view without a Content-Type header.
+Using EOCSvr you can finally write your views, updates, filters, shows directly in PHP. No more JavaScript, just pure PHP.
 
 
 Composer Installation
@@ -60,6 +59,8 @@ Usage
 -----
 To benefit of EOCSvr you must use [ElephantOnCouch](https://github.com/dedalozzo/ElephantOnCouch), a PHP client for CouchDB.
 Using [ElephantOnCouch](https://github.com/dedalozzo/ElephantOnCouch) you can interact with CouchDB, and you can write your views directly in PHP.
+You don't need to know about CouchDB internals, neither JSON, just learn [ElephantOnCouch](https://github.com/dedalozzo/ElephantOnCouch) and use it.
+All you need is to learn the MapReduce concept and an high level guide on CouchDB.
 
 
 Requirements
