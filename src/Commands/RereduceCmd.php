@@ -26,7 +26,7 @@ namespace Commands;
 //!                    return array_sum($values);
 //!                  else
 //!                    return sizeof($values);
-//!                }
+//!                };
 //!     )
 //!     [1] => Array
 //!     (

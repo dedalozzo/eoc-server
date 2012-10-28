@@ -28,7 +28,7 @@ use Lint\Lint;
 //!                    return array_sum($values);
 //!                  else
 //!                    return sizeof($values);
-//!                }
+//!                };
 //!     )
 //!     [1] => Array
 //!     (
