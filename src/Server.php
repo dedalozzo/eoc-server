@@ -10,15 +10,11 @@
 //! @warning This class won't work with CGI because uses standard input (STDIN) and standard output (STDOUT).
 //! @see http://wiki.apache.org/couchdb/View_server
 class Server {
-  const TMP_DIR = "/tmp/";
-  const LOG_FILENAME = "oec.log";
-
   const EOCSVR_ERROR = "eocsvr_error";
 
   const EXIT_SUCCESS = 0;
   const EXIT_FAILURE = 1;
 
-  private $debug; // When true we are debugging.
   private $fd; // Stores the log file descriptor.
 
   private static $commands = []; // Stores the commands' list.
@@ -29,11 +25,10 @@ class Server {
   private $timeout = 5000;
 
 
-  public final function __construct($debug = FALSE) {
-    $this->debug = (bool)$debug; // This is immutable.
-
-    // Creates the log file descriptor.
-    if ($this->debug) $this->fd = fopen(self::TMP_DIR.self::LOG_FILENAME, "w");
+  public final function __construct($fileName = "") {
+    // Try to create the log file descriptor.
+    if (!empty($fileName))
+      $this->fd = @fopen($fileName, "w");
 
     // Get all available commands.
     self::scanForCommands();
@@ -43,7 +38,7 @@ class Server {
 
 
   public final function __destruct() {
-    if ($this->debug) fclose($this->fd);
+    if (is_resource($this->fd)) fclose($this->fd);
   }
 
 
@@ -173,7 +168,7 @@ class Server {
   //! @brief Use this method when you want log something in a log file of your choice.
   //! @param[in] string $msg The log message to send CouchDB.
   public final function logMsg($msg = "") {
-    if ($this->debug) {
+    if (is_resource($this->fd)) {
         if (empty($msg))
         fputs($this->fd, "\n");
       else
