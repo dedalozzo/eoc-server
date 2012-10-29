@@ -25,6 +25,8 @@ class Server {
   private $timeout = 5000;
 
 
+  //! @brief Creates a Server instance.
+  //! @param[in] string $fileName (optional) The log file path. If you specify it, the server will start in debugging mode.
   public final function __construct($fileName = "") {
     // Try to create the log file descriptor.
     if (!empty($fileName))
@@ -37,6 +39,7 @@ class Server {
   }
 
 
+  //! @brief Destroy the Server instance previously created.
   public final function __destruct() {
     if (is_resource($this->fd)) fclose($this->fd);
   }
