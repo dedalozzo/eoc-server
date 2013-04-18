@@ -37,5 +37,3 @@ abstract class AbstractCmd {
   //! @return string
   abstract public function execute();
 }
-
-?>
