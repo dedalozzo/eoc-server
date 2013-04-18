@@ -1,4 +1,4 @@
-#! /opt/local/bin/php
+#! /usr/bin/php
 <?php
 
 //! @file eocsvr.php
@@ -11,5 +11,3 @@ $loader = require_once __DIR__ . "/../vendor/autoload.php";
 // Creates and starts the server instance.
 $server = new Server();
 $server->run();
-
-?>
