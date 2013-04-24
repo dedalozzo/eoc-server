@@ -91,7 +91,8 @@ class Server {
       else
         $this->sendError(self::EOCSVR_ERROR, "'$cmd' command is not supported.");
 
-      fflush($this->fd);
+      if (is_resource($this->fd))
+        fflush($this->fd);
     }
   }
 
