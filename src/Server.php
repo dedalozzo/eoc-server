@@ -126,7 +126,7 @@ class Server {
   }
 
 
-  public function reduce($funcs, $keys, $values, $rereduce) {
+  public final function reduce($funcs, $keys, $values, $rereduce) {
     $closure = NULL; // This initialization is made just to prevent a lint error during development.
 
     $reductions = [];
