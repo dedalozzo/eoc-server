@@ -12,7 +12,7 @@ namespace Commands;
 use Lint\Lint;
 
 
-//! @brief The map command (MapCmd) generates a set of key/value pairs, which can then optionally be reduced to single
+//! @brief The map command (MapDocCmd) generates a set of key/value pairs, which can then optionally be reduced to single
 //! value or to a group of values by the reduce command (ReduceCmd). So that's the purpose of this class.
 //! @details The reduce step primarily involves working with keys and values, not document IDs. Either a single computed
 //! reduction of all values will be produced, or reductions of values grouped by keys, will ultimately be produced.
