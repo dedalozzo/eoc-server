@@ -31,10 +31,10 @@ class ResetCmd extends AbstractCmd {
 
 
   public final function execute() {
-    $pippo = reset($this->args);
+    $args = reset($this->args);
 
-    $this->server->setReduceLimit = $pippo['reduce_limit'];
-    $this->server->setTimeout = $pippo['timeout'];
+    $this->server->setReduceLimit = $args['reduce_limit'];
+    $this->server->setTimeout = $args['timeout'];
 
     $this->server->resetFuncs();
 
