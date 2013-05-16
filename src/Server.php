@@ -151,10 +151,10 @@ class Server {
   //! @details Any message will appear in the couch.log file, as follows:
   //!   [Tue, 22 May 2012 15:26:03 GMT] [info] [<0.80.0>] This is a log message
   //! You can't force the message's level. Every message will be marked as [info] even in case of an error, because
-  //! CouchDB doesn't let you specify a different level. In case or error use <i>logError</i> instead.
+  //! CouchDB doesn't let you specify a different level. In case or error use <i>sendError</i> instead.
   //! @warning Keep in mind that you can't use this method inside <i>reset</i> or <i>addFun</>, because you are going to
   //! generate an error. CouchDB in fact doesn't expect a message when it sends <i>reset</i> or <i>add_fun</i> commands.
-  //! For debugging purpose you can use the <i>log</i> method, to write messages in a log file of your choice.
+  //! For debugging purpose you can use the <i>logMsg</i> method, to write messages in a log file of your choice.
   //! @param[in] string $msg The message to store into the log file.
   public final function sendMsg($msg) {
     $this->writeln(json_encode(array("log", $msg)));
