@@ -22,7 +22,6 @@ namespace Commands;
 //!     (
 //!         [_id] => 32012
 //!         [_rev] => 1-f19919e544340438babac6cc86ec61d5
-//!         [idItem] => 32012
 //!         [title] => Visual Modelling with Rational Rose 2000 and UML
 //!     )
 //! )
