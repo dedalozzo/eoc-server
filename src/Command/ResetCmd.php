@@ -6,7 +6,7 @@
 //! @author Filippo F. Fadda
 
 
-namespace Commands;
+namespace Command;
 
 
 //! @brief Resets the internal state of the server and makes it forget all previous input.

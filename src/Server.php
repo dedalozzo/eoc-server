@@ -50,11 +50,11 @@ class Server {
   //! Every single command must be interpreted and executed by a specific command handler. This method scans a directory
   //! in search of every available handler.
   private final static function scanForCommands() {
-    foreach (glob(dirname(__DIR__)."/src/Commands/*.php") as $fileName) {
+    foreach (glob(dirname(__DIR__)."/src/Command/*.php") as $fileName) {
       //$className = preg_replace('/\.php\z/i', '', $fileName);
-      $className = "Commands\\".basename($fileName, ".php"); // Same like the above regular expression.
+      $className = "Command\\".basename($fileName, ".php"); // Same like the above regular expression.
 
-      if (class_exists($className) && array_key_exists("Commands\\AbstractCmd", class_parents($className)))
+      if (class_exists($className) && array_key_exists("Command\\AbstractCmd", class_parents($className)))
         self::$commands[$className::getName()] = $className;
     }
   }

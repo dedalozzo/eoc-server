@@ -7,7 +7,7 @@
 
 
 //! @brief This namespace contains all the available concrete commands.
-namespace Commands;
+namespace Command;
 
 
 //! @brief This class defines the interface for all the concrete Server commands.

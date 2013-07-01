@@ -6,7 +6,7 @@
 //! @author Filippo F. Fadda
 
 
-namespace Commands;
+namespace Command;
 
 
 use Lint\Lint;

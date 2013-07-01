@@ -6,7 +6,7 @@
 //! @author Filippo F. Fadda
 
 
-namespace Commands;
+namespace Command;
 
 
 //! @brief The map command (MapCmd) generates a set of key/value pairs, which can then optionally be reduced to single

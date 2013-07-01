@@ -6,8 +6,7 @@
 //! @author Filippo F. Fadda
 
 
-
-namespace Commands;
+namespace Command;
 
 
 //! @brief Maps a document against every single map function stored into the server.
