@@ -138,7 +138,7 @@ class Server {
       if (is_callable($closure))
         $reductions[] = call_user_func($closure, $keys, $values, $rereduce);
       else
-        throw new \Exception("The function you provided is not callable.");
+        throw new \BadFunctionCallException("The function you provided is not callable.");
 
     }
 
