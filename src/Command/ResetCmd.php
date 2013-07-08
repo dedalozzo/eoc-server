@@ -6,7 +6,7 @@
 //! @author Filippo F. Fadda
 
 
-namespace Command;
+namespace ElephantOnCouch\Command;
 
 
 //! @brief Resets the internal state of the server and makes it forget all previous input.
@@ -21,16 +21,15 @@ namespace Command;
 //!     )
 //! )
 //! @endcode
-class ResetCmd extends AbstractCmd {
-  const RESET = "reset";
+final class ResetCmd extends AbstractCmd {
 
 
-  public final static function getName() {
-    return self::RESET;
+  public static function getName() {
+    return "reset";
   }
 
 
-  public final function execute() {
+  public function execute() {
     $args = reset($this->args);
 
     $this->server->setReduceLimit = $args['reduce_limit'];

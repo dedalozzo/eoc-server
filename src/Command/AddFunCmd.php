@@ -6,7 +6,7 @@
 //! @author Filippo F. Fadda
 
 
-namespace Command;
+namespace ElephantOnCouch\Command;
 
 
 use Lint\Lint;
@@ -27,16 +27,15 @@ use Lint\Lint;
 //!            };
 //! )
 //! @endcode
-class AddFunCmd extends AbstractCmd {
-  const ADD_FUN = "add_fun";
+final class AddFunCmd extends AbstractCmd {
 
 
-  public final static function getName() {
-    return self::ADD_FUN;
+  public static function getName() {
+    return "add_fun";
   }
 
 
-  public final function execute() {
+  public function execute() {
     $fn = reset($this->args);
     Lint::checkSourceCode($fn);
     $this->server->addFunc($fn);

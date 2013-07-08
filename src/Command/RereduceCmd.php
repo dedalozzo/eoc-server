@@ -6,7 +6,7 @@
 //! @author Filippo F. Fadda
 
 
-namespace Command;
+namespace ElephantOnCouch\Command;
 
 
 //! @brief The map command (MapCmd) generates a set of key/value pairs, which can then optionally be reduced to single
@@ -36,16 +36,15 @@ namespace Command;
 //!     )
 //! )
 //! @endcode
-class RereduceCmd extends AbstractCmd {
-  const REREDUCE = "rereduce";
+final class RereduceCmd extends AbstractCmd {
 
 
-  public final static function getName() {
-    return self::REREDUCE;
+  public static function getName() {
+    return "rereduce";
   }
 
 
-  public final function execute() {
+  public function execute() {
     // Extracts functions and values from the arguments array.
     @list($funcs, $values) = $this->args;
 

@@ -6,7 +6,7 @@
 //! @author Filippo F. Fadda
 
 
-namespace Command;
+namespace ElephantOnCouch\Command;
 
 
 use Lint\Lint;
@@ -53,16 +53,15 @@ use Lint\Lint;
 //!     )
 //! )
 //! @endcode
-class ReduceCmd extends AbstractCmd {
-  const REDUCE = "reduce";
+final class ReduceCmd extends AbstractCmd {
 
 
-  public final static function getName() {
-    return self::REDUCE;
+  public static function getName() {
+    return "reduce";
   }
 
 
-  public final function execute() {
+  public function execute() {
     // Extracts functions and pairs (keys, values) from the arguments array.
     @list($funcs, $pairs) = $this->args;
 

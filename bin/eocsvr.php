@@ -4,6 +4,10 @@
 //! @file eocsvr.php
 //! @author Filippo F. Fadda
 
+
+use ElephantOnCouch\Server;
+
+
 error_reporting (E_ALL & ~(E_NOTICE | E_STRICT));
 
 // Initializes the Composer autoloading system.

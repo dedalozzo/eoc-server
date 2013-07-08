@@ -6,7 +6,7 @@
 //! @author Filippo F. Fadda
 
 
-namespace Command;
+namespace ElephantOnCouch\Command;
 
 
 //! @brief Maps a document against every single map function stored into the server.
@@ -25,16 +25,15 @@ namespace Command;
 //!     )
 //! )
 //! @endcode
-class MapDocCmd extends AbstractCmd {
-  const MAP_DOC = "map_doc";
+final class MapDocCmd extends AbstractCmd {
 
 
-  public final static function getName() {
-    return self::MAP_DOC;
+  public static function getName() {
+    return "map_doc";
   }
 
 
-  public final function execute() {
+  public function execute() {
     $doc = self::arrayToObject(reset($this->args));
 
     // We use a closure here, so we can just expose the emit() function to the closure provided by the user. We have
@@ -76,7 +75,7 @@ class MapDocCmd extends AbstractCmd {
 
   // @brief Converts the array to an object.
   // @return object
-  public final static function arrayToObject($array) {
+  public static function arrayToObject($array) {
     return is_array($array) ? (object)array_map(__METHOD__, $array) : $array;
   }
 
