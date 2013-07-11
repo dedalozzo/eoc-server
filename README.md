@@ -51,7 +51,7 @@ vim /opt/local/etc/couchdb/local.ini
 Then, under the `[query_servers]` section, add the following line:
 ``` sh
 [query_servers]
-php=/opt/local/share/couchdb/server/eocsvr/eocsvr.php
+php=/opt/local/share/couchdb/server/eocsvr/bin/eocsvr.php
 ```
 
 
