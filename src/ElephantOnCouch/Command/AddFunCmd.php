@@ -28,6 +28,7 @@ use Lint\Lint;
 //! )
 //! @endcode
 final class AddFunCmd extends AbstractCmd {
+  use CmdTrait;
 
 
   public static function getName() {

@@ -26,6 +26,7 @@ namespace ElephantOnCouch\Command;
 //! )
 //! @endcode
 final class MapDocCmd extends AbstractCmd {
+  use CmdTrait;
 
 
   public static function getName() {

@@ -37,6 +37,7 @@ namespace ElephantOnCouch\Command;
 //! )
 //! @endcode
 final class RereduceCmd extends AbstractCmd {
+  use CmdTrait;
 
 
   public static function getName() {

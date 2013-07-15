@@ -18,7 +18,6 @@ use ElephantOnCouch\Server;
 //! In case of CouchDB design documents' structure changes, you just need to create a new command, starting from here.
 //! @nosubgrouping
 abstract class AbstractCmd implements CmdInterface {
-  use CmdTrait;
 
   protected $server;
   protected $args;

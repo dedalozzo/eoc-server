@@ -22,6 +22,7 @@ namespace ElephantOnCouch\Command;
 //! )
 //! @endcode
 final class ResetCmd extends AbstractCmd {
+  use CmdTrait;
 
 
   public static function getName() {

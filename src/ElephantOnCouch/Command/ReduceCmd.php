@@ -54,6 +54,7 @@ use Lint\Lint;
 //! )
 //! @endcode
 final class ReduceCmd extends AbstractCmd {
+  use CmdTrait;
 
 
   public static function getName() {
