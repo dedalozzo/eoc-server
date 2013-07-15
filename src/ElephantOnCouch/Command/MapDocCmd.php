@@ -33,6 +33,13 @@ final class MapDocCmd extends AbstractCmd {
   }
 
 
+  // @brief Converts the array to an object.
+  // @return object
+  public static function arrayToObject($array) {
+    return is_array($array) ? (object)array_map(__METHOD__, $array) : $array;
+  }
+
+
   public function execute() {
     $doc = self::arrayToObject(reset($this->args));
 
@@ -70,13 +77,6 @@ final class MapDocCmd extends AbstractCmd {
 
     // Sends mappings to CouchDB.
     $this->server->writeln(json_encode($result));
-  }
-
-
-  // @brief Converts the array to an object.
-  // @return object
-  public static function arrayToObject($array) {
-    return is_array($array) ? (object)array_map(__METHOD__, $array) : $array;
   }
 
 }
