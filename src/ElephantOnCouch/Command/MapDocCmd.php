@@ -45,7 +45,7 @@ final class MapDocCmd extends AbstractCmd {
     $doc = self::arrayToObject(reset($this->args));
 
     // We use a closure here, so we can just expose the emit() function to the closure provided by the user. We have
-    // another advantage here: the $map variable is defined inside execute(), so we don't need to declare it as class member.
+    // another advantage: the $map variable is defined inside execute(), so we don't need to declare it as class member.
     $emit = function($key = NULL, $value = NULL) use (&$map) {
       $map[] = array($key, $value);
     };
