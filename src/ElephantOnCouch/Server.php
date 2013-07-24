@@ -40,7 +40,7 @@ final class Server {
       $this->fd = @fopen($fileName, "w");
 
     // Get all available commands.
-    $this->addCommands();
+    $this->loadCommands();
 
     $this->funcs = [];
   }
@@ -55,7 +55,7 @@ final class Server {
   //! @brief Initializes the commands list.
   //! @details CouchDB communicates with a Query Server over standard input/output. Each line represents a command.
   //! Every single command must be interpreted and executed by a specific command handler.
-  public function addCommands() {
+  private function loadCommands() {
     $this->commands[Command\AddFunCmd::getName()] = Command\AddFunCmd::getClass();
     $this->commands[Command\MapDocCmd::getName()] = Command\MapDocCmd::getClass();
     $this->commands[Command\ReduceCmd::getName()] = Command\ReduceCmd::getClass();
@@ -130,6 +130,16 @@ final class Server {
   }
 
 
+  //! @brief The Map step generates a set of key/valu pairs which can then optionally be reduced to a single value - or
+  //! to a grouping of values - in the Reduce step.
+  //! @details If a view has a reduce function, it is used to produce aggregate results for that view. A reduce function
+  //! is passed a set of intermediate values and combines them to a single value. Reduce functions must accept, as input,
+  //! results emitted by its corresponding map function as well as results returned by the reduce function itself. The
+  //! latter case is referred to as a rereduce.<br />
+  //! This function is called by commands ReduceCmd and RereduceCmd.
+  //! @param[in] array $funcs An array of reduce functions.
+  //! @param[in] array $keys An array of mapped keys and document IDs in the form of [key, id].
+  //! @param[in] array $values An array of mapped values.
   public function reduce($funcs, $keys, $values, $rereduce) {
     $closure = NULL; // This initialization is made just to prevent a lint error during development.
 
