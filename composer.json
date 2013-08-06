@@ -12,7 +12,7 @@
             "homepage": "http://www.linkedin.com/in/filippofadda"
         }
     ],
-    "minimum-stability": "dev-master",
+    "minimum-stability": "dev",
     "require": {
         "php": ">=5.4.0",
         "3f/lint": "dev-master"
