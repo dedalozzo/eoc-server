@@ -35,10 +35,6 @@ final class Server {
   //! @param[in] string $fileName (optional) The log file path. If you specify it, the server will start in debugging
   //! mode.
   public function __construct($fileName = "") {
-    // Try to create the log file descriptor.
-    if (!empty($fileName))
-      $this->fd = @fopen($fileName, "w");
-
     // Get all available commands.
     $this->loadCommands();
 
@@ -67,8 +63,6 @@ final class Server {
   //! @brief Starts the server.
   public function run() {
 
-    $this->logMsg("Server.run()");
-
     while ($line = trim(fgets(STDIN))) {
       // We decode the JSON string into an array. Returned objects will be converted into associative arrays.
       $args = json_decode($line, TRUE);
@@ -88,12 +82,12 @@ final class Server {
           $cmdObj->execute();
         }
         catch (\Exception $e) {
-          $this->sendError(self::EOCSVR_ERROR, $e->getMessage());
+          $this->error(self::EOCSVR_ERROR, $e->getMessage());
           exit(Server::EXIT_FAILURE);
         }
       }
       else
-        $this->sendError(self::EOCSVR_ERROR, "'$cmd' command is not supported.");
+        $this->error(self::EOCSVR_ERROR, "'$cmd' command is not supported.");
 
       if (is_resource($this->fd))
         fflush($this->fd);
@@ -152,7 +146,7 @@ final class Server {
       if (is_callable($closure))
         $reductions[] = call_user_func($closure, $keys, $values, $rereduce);
       else
-        throw new \BadFunctionCallException("The function you provided is not callable.");
+        throw new \BadFunctionCallException("The reduce function is not callable.");
 
     }
 
@@ -165,35 +159,40 @@ final class Server {
   //! @details Any message will appear in the couch.log file, as follows:
   //!   [Tue, 22 May 2012 15:26:03 GMT] [info] [<0.80.0>] This is a log message
   //! You can't force the message's level. Every message will be marked as [info] even in case of an error, because
-  //! CouchDB doesn't let you specify a different level. In case or error use <i>sendError</i> instead.
-  //! @warning Keep in mind that you can't use this method inside <i>reset</i> or <i>addFun</>, because you are going to
+  //! CouchDB doesn't let you specify a different level. In case or error use error(), forbidden() or unauthorized()
+  //! instead.
+  //! @warning Keep in mind that you can't use this method inside reset() or addFun(), because you are going to
   //! generate an error. CouchDB in fact doesn't expect a message when it sends <i>reset</i> or <i>add_fun</i> commands.
-  //! For debugging purpose you can use the <i>logMsg</i> method, to write messages in a log file of your choice.
-  //! @param[in] string $msg The message to store into the log file.
-  public function sendMsg($msg) {
-    $this->writeln(json_encode(array("log", $msg)));
+  //! @param[in] string $msg The message to log.
+  public function log($msg) {
+    $this->writeln(json_encode(["log", $msg]));
   }
 
 
   //! @brief In case of error CouchDB doesn't take any action. We simply notify the error, sending a special message to it.
   //! @param[in] string $error The error keyword.
   //! @param[in] string $reason The error message.
-  public function sendError($error, $reason) {
-    $this->writeln(json_encode(array("error" => $error, "reason" => $reason)));
+  public function error($keyword, $reason) {
+    $this->writeln(json_encode(["error", $keyword, $reason]));
   }
 
 
-  //! @brief Use this method when you want log something in a log file of your choice.
-  //! @param[in] string $msg The log message to send CouchDB.
-  public function logMsg($msg = "") {
-    if (is_resource($this->fd)) {
-        if (empty($msg))
-        fputs($this->fd, "\n");
-      else
-        fputs($this->fd, date("Y-m-d H:i:s")." - ".$msg."\n");
+  //! @brief The forbidden error are widely used by validate document update functions to stop further function processing
+  //! and prevent on disk store of the new document version.
+  //! @details Since this errors actually is not an error, but an assertion against user actions, CouchDB doesn't log it
+  //! at “error” level, but returns HTTP 403 Forbidden response with error information object.
+  //! @param[in] string $reason The error message.
+  public function forbidden($reason) {
+    $this->writeln(json_encode(["forbidden" => $reason]));
+  }
 
-      fflush($this->fd);
-    }
+
+  //! @brief The unauthorized error mostly acts like forbidden one, but with semantic as please authorize first.
+  //! @details CouchDB doesn't log it at “error” level, but returns HTTP 401 Unauthorized response with error information
+  //! object.
+  //! @param[in] string $reason The error message.
+  public function unauthorized($reason) {
+    $this->writeln(json_encode(["unauthorized" => $reason]));
   }
 
 
