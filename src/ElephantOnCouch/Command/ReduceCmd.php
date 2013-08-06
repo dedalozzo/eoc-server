@@ -73,6 +73,8 @@ final class ReduceCmd extends AbstractCmd {
     foreach ($pairs as $pair) {
       $keys[] = $pair[0];
       $values[] = $pair[1];
+
+      $this->server->log(sprintf("REDUCE key: %s value: %s", $pair[0], $pair[1]));
     }
 
     // Checks every function for syntax errors. We do the check only here to not repeat in rereduce.

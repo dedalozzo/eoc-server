@@ -44,6 +44,8 @@ final class MapDocCmd extends AbstractCmd {
   public function execute() {
     $doc = self::arrayToObject(reset($this->args));
 
+    $this->server->log(sprintf("MAP %s", $doc->_id));
+
     // We use a closure here, so we can just expose the emit() function to the closure provided by the user. We have
     // another advantage: the $map variable is defined inside execute(), so we don't need to declare it as class member.
     $emit = function($key = NULL, $value = NULL) use (&$map) {
@@ -73,7 +75,7 @@ final class MapDocCmd extends AbstractCmd {
         $result[] = $map;
       }
       else
-        throw new \Exception("The function you provided is not callable.");
+        throw new \BadFunctionCallException("The map function is not callable.");
     }
 
     // Sends mappings to CouchDB.

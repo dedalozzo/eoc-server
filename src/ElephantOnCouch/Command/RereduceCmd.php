@@ -49,6 +49,9 @@ final class RereduceCmd extends AbstractCmd {
     // Extracts functions and values from the arguments array.
     @list($funcs, $values) = $this->args;
 
+    foreach ($values as $value)
+      $this->server->log(sprintf("REREDUCE value: %s", $value));
+
     $this->server->reduce($funcs, NULL, $values, TRUE);
   }
 
