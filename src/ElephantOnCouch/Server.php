@@ -32,9 +32,7 @@ final class Server {
 
 
   //! @brief Creates a Server instance.
-  //! @param[in] string $fileName (optional) The log file path. If you specify it, the server will start in debugging
-  //! mode.
-  public function __construct($fileName = "") {
+  public function __construct() {
     // Get all available commands.
     $this->loadCommands();
 
@@ -89,8 +87,6 @@ final class Server {
       else
         $this->error(self::EOCSVR_ERROR, "'$cmd' command is not supported.");
 
-      if (is_resource($this->fd))
-        fflush($this->fd);
     }
   }
 
