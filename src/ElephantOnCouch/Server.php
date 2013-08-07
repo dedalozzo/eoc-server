@@ -33,14 +33,14 @@ final class Server {
 
 
   //! @brief Creates a Server instance.
-  public function __construct($debug = FALSE) {
+  public function __construct($fileName = "") {
 
     $this->log = new Logger('eocsvr');
 
-    if ($debug)
-      $handler = new Handler\ChromePHPHandler();
-    else
+    if (empty($fileName))
       $handler = new Handler\NullHandler();
+    else
+      $handler = new Handler\StreamHandler($fileName, Logger::DEBUG);
 
     $this->log->pushHandler($handler);
 
