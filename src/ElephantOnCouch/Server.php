@@ -10,10 +10,11 @@ namespace ElephantOnCouch;
 
 
 use ElephantOnCouch\Command;
+use ElephantOnCouch\Handler\CouchHandler;
 
 use Monolog\Logger;
 use Monolog\ErrorHandler;
-use Monolog\Handler;
+use Monolog\Handler\StreamHandler;
 
 
 //! @brief ElephantOnCouch Query Server main class.
@@ -23,7 +24,7 @@ final class Server {
   const EXIT_SUCCESS = 0;
   const EXIT_FAILURE = 1;
 
-  private $log; // Stores the logger instance.
+  private $monolog; // Stores the logger instance.
 
   private $commands = []; // Stores the commands' list.
 
@@ -34,17 +35,22 @@ final class Server {
 
 
   //! @brief Creates a Server instance.
+  //! @details To enable debug logging you must pass the log file name to the constructor, otherwise high level info and
+  //! errors are saved on the <i>couch.log</i> file.
+  //! @param[in] string $fileName The complete log file path.
   public function __construct($fileName = "") {
+    // Creates a Monolog instance.
+    $this->monolog = new Logger('eocsvr');
 
-    $this->log = new Logger('eocsvr');
-    ErrorHandler::register($this->log);
+    // Registers the Monolog error handler to log errors and exceptions.
+    ErrorHandler::register($this->monolog);
 
-    if (empty($fileName))
-      $handler = new Handler\NullHandler();
-    else
-      $handler = new Handler\StreamHandler($fileName, Logger::DEBUG);
+    // Using this handler we are able to log messages and errors to couch.log file.
+    $this->monolog->pushHandler(new CouchHandler($this));
 
-    $this->log->pushHandler($handler);
+    // If a log file is provided, creates a stream handler to log debugging messages.
+    if (!empty($fileName))
+      $this->monolog->pushHandler(new StreamHandler($fileName, Logger::DEBUG));
 
     // Get all available commands.
     $this->loadCommands();
@@ -67,12 +73,12 @@ final class Server {
     $this->commands[Command\ReduceCmd::getName()] = Command\ReduceCmd::getClass();
     $this->commands[Command\RereduceCmd::getName()] = Command\RereduceCmd::getClass();
     $this->commands[Command\ResetCmd::getName()] = Command\ResetCmd::getClass();
-    $this->log->addDebug('Commands loaded');
   }
 
 
   //! @brief Starts the server.
   public function run() {
+    $this->monolog->addDebug("RUN");
 
     while ($line = trim(fgets(STDIN))) {
       // We decode the JSON string into an array. Returned objects will be converted into associative arrays.
@@ -82,9 +88,9 @@ final class Server {
       // Only the command implementation knows which and how many arguments are provided for the command itself.
       $cmd = array_shift($args);
 
-      $this->log->addDebug("Command: $cmd");
-      $this->log->addDebug("Type: ".gettype($args));
-      $this->log->addDebug("Arguments: ".json_encode($args));
+      $this->monolog->addDebug("Line: ".$line);
+      $this->monolog->addDebug("Command Name: ".$cmd);
+      $this->monolog->addDebug("Args Type: ".gettype($args));
 
       if (array_key_exists($cmd, $this->commands)) {
         try {
@@ -93,12 +99,12 @@ final class Server {
           $cmdObj->execute();
         }
         catch (\Exception $e) {
-          $this->error('runtime_error', $e->getMessage());
-          exit(Server::EXIT_FAILURE);
+          //$this->error('runtime_error', $e->getMessage());
+          //exit(Server::EXIT_FAILURE);
         }
       }
       else {
-        $this->error('command_not_supported', sprintf("'%s' command is not supported.", $cmd));
+        $this->monolog->addCritical(sprintf("'%s' command is not supported.", $cmd));
         exit(Server::EXIT_FAILURE);
       }
 
@@ -155,14 +161,17 @@ final class Server {
 
     // Executes the reductions.
     foreach ($funcs as $fn) {
+      $this->monolog->addDebug($fn);
+
       eval("\$closure = ".$fn);
 
       if (is_callable($closure))
         $reductions[] = call_user_func($closure, $keys, $values, $rereduce);
       else
         throw new \BadFunctionCallException("The reduce function is not callable.");
-
     }
+
+    $this->monolog->addDebug('reductions: '.json_encode($reductions));
 
     // Sends mappings to CouchDB.
     $this->writeln("[true,".json_encode($reductions)."]");
@@ -178,7 +187,7 @@ final class Server {
   //! @warning Keep in mind that you can't use this method inside reset() or addFun(), because you are going to
   //! generate an error. CouchDB in fact doesn't expect a message when it sends <i>reset</i> or <i>add_fun</i> commands.
   //! @param[in] string $msg The message to log.
-  public function log($msg) {
+  public function monolog($msg) {
     $this->writeln(json_encode(["log", $msg]));
   }
 
@@ -207,6 +216,12 @@ final class Server {
   //! @param[in] string $reason The error message.
   public function unauthorized($reason) {
     $this->writeln(json_encode(["unauthorized" => $reason]));
+  }
+
+
+  //! @brief Gets the logger instance.
+  public function getMonolog() {
+    return $this->monolog;
   }
 
 

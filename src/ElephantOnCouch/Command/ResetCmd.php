@@ -33,8 +33,8 @@ final class ResetCmd extends AbstractCmd {
   public function execute() {
     $args = reset($this->args);
 
-    $this->server->setReduceLimit = $args['reduce_limit'];
-    $this->server->setTimeout = $args['timeout'];
+    $this->server->setReduceLimit($args['reduce_limit']); // Not used.
+    $this->server->setTimeout($args['timeout']); // Not used.
 
     $this->server->resetFuncs();
 
