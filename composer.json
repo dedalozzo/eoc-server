@@ -15,7 +15,8 @@
     "minimum-stability": "dev",
     "require": {
         "php": ">=5.4.0",
-        "3f/lint": "dev-master"
+        "3f/lint": "dev-master",
+        "monolog/monolog": "1.6.0"
     },
     "autoload": {
         "psr-0": {"": "src/"}

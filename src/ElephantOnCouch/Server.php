@@ -11,13 +11,13 @@ namespace ElephantOnCouch;
 
 use ElephantOnCouch\Command;
 
+use Monolog\Logger;
 
-//! @brief This class represents the implementation of a Query Server.
+
+//! @brief ElephantOnCouch Query Server main class.
 //! @warning This class won't work with CGI because uses standard input (STDIN) and standard output (STDOUT).
 //! @see http://wiki.apache.org/couchdb/View_server
 final class Server {
-  const EOCSVR_ERROR = "eocsvr_error";
-
   const EXIT_SUCCESS = 0;
   const EXIT_FAILURE = 1;
 
@@ -27,12 +27,22 @@ final class Server {
 
   private $funcs; // Stores the functions' list.
 
-  private $reduceLimit = 1;
-  private $timeout = 5000;
+  private $reduceLimit; // Not used.
+  private $timeout; // Not used.
 
 
   //! @brief Creates a Server instance.
   public function __construct() {
+
+    // create a log channel
+    $log = new Logger('name');
+    $log->pushHandler(new StreamHandler('path/to/your.log', Logger::WARNING));
+
+    // add records to the log
+    $log->addWarning('Foo');
+    $log->addError('Bar');
+
+
     // Get all available commands.
     $this->loadCommands();
 
@@ -80,12 +90,14 @@ final class Server {
           $cmdObj->execute();
         }
         catch (\Exception $e) {
-          $this->error(self::EOCSVR_ERROR, $e->getMessage());
+          $this->error('runtime_error', $e->getMessage());
           exit(Server::EXIT_FAILURE);
         }
       }
-      else
-        $this->error(self::EOCSVR_ERROR, "'$cmd' command is not supported.");
+      else {
+        $this->error('command_not_supported', sprintf("'%s' command is not supported.", $cmd));
+        exit(Server::EXIT_FAILURE);
+      }
 
     }
   }
@@ -130,6 +142,9 @@ final class Server {
   //! @param[in] array $funcs An array of reduce functions.
   //! @param[in] array $keys An array of mapped keys and document IDs in the form of [key, id].
   //! @param[in] array $values An array of mapped values.
+  //! @warning This function ignores the value of <i>reduce_limit</i>, because the author thinks the algorithm used by
+  //! by JavaScript query server sucks.
+  //! simply sucks.
   public function reduce($funcs, $keys, $values, $rereduce) {
     $closure = NULL; // This initialization is made just to prevent a lint error during development.
 
@@ -193,8 +208,9 @@ final class Server {
 
 
   //! @brief Sets the limit of times a reduce function can be called.
+  //! @warning Actually <i>reduce_limit</i> config option is a boolean.
   public function setReduceLimit($value) {
-    $this->reduceLimit = (integer)$value;
+    $this->reduceLimit = $value;
   }
 
 
