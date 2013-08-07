@@ -12,6 +12,7 @@ namespace ElephantOnCouch;
 use ElephantOnCouch\Command;
 
 use Monolog\Logger;
+use Monolog\ErrorHandler;
 use Monolog\Handler;
 
 
@@ -36,6 +37,7 @@ final class Server {
   public function __construct($fileName = "") {
 
     $this->log = new Logger('eocsvr');
+    ErrorHandler::register($this->log);
 
     if (empty($fileName))
       $handler = new Handler\NullHandler();
