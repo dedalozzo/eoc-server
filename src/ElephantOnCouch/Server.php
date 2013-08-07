@@ -12,6 +12,7 @@ namespace ElephantOnCouch;
 use ElephantOnCouch\Command;
 
 use Monolog\Logger;
+use Monolog\Handler;
 
 
 //! @brief ElephantOnCouch Query Server main class.
@@ -21,7 +22,7 @@ final class Server {
   const EXIT_SUCCESS = 0;
   const EXIT_FAILURE = 1;
 
-  private $fd; // Stores the log file descriptor.
+  private $log; // Stores the logger instance.
 
   private $commands = []; // Stores the commands' list.
 
@@ -32,16 +33,16 @@ final class Server {
 
 
   //! @brief Creates a Server instance.
-  public function __construct() {
+  public function __construct($debug = FALSE) {
 
-    // create a log channel
-    $log = new Logger('name');
-    $log->pushHandler(new StreamHandler('path/to/your.log', Logger::WARNING));
+    $this->log = new Logger('eocsvr');
 
-    // add records to the log
-    $log->addWarning('Foo');
-    $log->addError('Bar');
+    if ($debug)
+      $handler = new Handler\ChromePHPHandler();
+    else
+      $handler = new Handler\NullHandler();
 
+    $this->log->pushHandler($handler);
 
     // Get all available commands.
     $this->loadCommands();
@@ -52,7 +53,6 @@ final class Server {
 
   //! @brief Destroy the Server instance previously created.
   public function __destruct() {
-    if (is_resource($this->fd)) fclose($this->fd);
   }
 
 
@@ -65,6 +65,7 @@ final class Server {
     $this->commands[Command\ReduceCmd::getName()] = Command\ReduceCmd::getClass();
     $this->commands[Command\RereduceCmd::getName()] = Command\RereduceCmd::getClass();
     $this->commands[Command\ResetCmd::getName()] = Command\ResetCmd::getClass();
+    $this->log->addDebug('Commands loaded');
   }
 
 
@@ -79,9 +80,9 @@ final class Server {
       // Only the command implementation knows which and how many arguments are provided for the command itself.
       $cmd = array_shift($args);
 
-      //$this->logMsg("Command: $cmd");
-      //$this->logMsg("Type: ".gettype($args));
-      //$this->logMsg("Arguments: ".json_encode($args));
+      $this->log->addDebug("Command: $cmd");
+      $this->log->addDebug("Type: ".gettype($args));
+      $this->log->addDebug("Arguments: ".json_encode($args));
 
       if (array_key_exists($cmd, $this->commands)) {
         try {
