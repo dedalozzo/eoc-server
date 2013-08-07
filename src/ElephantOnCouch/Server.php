@@ -187,7 +187,7 @@ final class Server {
   //! @warning Keep in mind that you can't use this method inside reset() or addFun(), because you are going to
   //! generate an error. CouchDB in fact doesn't expect a message when it sends <i>reset</i> or <i>add_fun</i> commands.
   //! @param[in] string $msg The message to log.
-  public function monolog($msg) {
+  public function log($msg) {
     $this->writeln(json_encode(["log", $msg]));
   }
 

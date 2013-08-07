@@ -40,15 +40,15 @@ class CouchHandler extends AbstractProcessingHandler {
         break;
 
       case Logger::INFO: // Sends a message.
-        $this->server->monolog($record['channel'], $record['message']);
+        $this->server->log($record['message']);
         break;
 
       case Logger::NOTICE: // Sends a message.
-        $this->server->monolog($record['channel'], $record['message']);
+        $this->server->log($record['message']);
         break;
 
       case Logger::WARNING: // Sends a message.
-        $this->server->monolog($record['channel'], $record['message']);
+        $this->server->log($record['message']);
         break;
 
       case Logger::ERROR:
