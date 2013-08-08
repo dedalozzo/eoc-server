@@ -44,7 +44,7 @@ final class MapDocCmd extends AbstractCmd {
   public function execute() {
     $doc = self::arrayToObject(reset($this->args));
 
-    $this->server->getMonolog()->addInfo("MAP ".$doc->_id);
+    $this->server->getMonolog()->addDebug("MAP ".$doc->_id);
 
     // We use a closure here, so we can just expose the emit() function to the closure provided by the user. We have
     // another advantage: the $map variable is defined inside execute(), so we don't need to declare it as class member.
