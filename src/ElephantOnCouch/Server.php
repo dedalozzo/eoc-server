@@ -36,7 +36,7 @@ final class Server {
 
   //! @brief Creates a Server instance.
   //! @details To enable debug logging you must pass the log file name to the constructor, otherwise high level info and
-  //! errors are saved on the <i>couch.log</i> file.
+  //! errors are saved on the `couch.log` file.
   //! @param[in] string $fileName The complete log file path.
   public function __construct($fileName = "") {
     // Creates a Monolog instance.
@@ -151,7 +151,7 @@ final class Server {
   //! @param[in] array $funcs An array of reduce functions.
   //! @param[in] array $keys An array of mapped keys and document IDs in the form of [key, id].
   //! @param[in] array $values An array of mapped values.
-  //! @warning This function ignores the value of <i>reduce_limit</i>, because the author thinks the algorithm used by
+  //! @warning This function ignores the value of `reduce_limit`, because the author thinks the algorithm used by
   //! by JavaScript query server sucks.
   //! simply sucks.
   public function reduce($funcs, $keys, $values, $rereduce) {
@@ -185,7 +185,7 @@ final class Server {
   //! CouchDB doesn't let you specify a different level. In case or error use error(), forbidden() or unauthorized()
   //! instead.
   //! @warning Keep in mind that you can't use this method inside reset() or addFun(), because you are going to
-  //! generate an error. CouchDB in fact doesn't expect a message when it sends <i>reset</i> or <i>add_fun</i> commands.
+  //! generate an error. CouchDB in fact doesn't expect a message when it sends `reset` or `add_fun` commands.
   //! @param[in] string $msg The message to log.
   public function log($msg) {
     $this->writeln(json_encode(["log", $msg]));
@@ -226,7 +226,7 @@ final class Server {
 
 
   //! @brief Sets the limit of times a reduce function can be called.
-  //! @warning Actually <i>reduce_limit</i> config option is a boolean.
+  //! @warning Actually `reduce_limit` config option is a boolean.
   public function setReduceLimit($value) {
     $this->reduceLimit = $value;
   }

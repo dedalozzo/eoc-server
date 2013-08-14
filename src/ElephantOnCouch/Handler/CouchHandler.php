@@ -16,7 +16,7 @@ use Monolog\Handler\AbstractProcessingHandler;
 use ElephantOnCouch\Server;
 
 
-//! @brief This special handler writes logging messages directly into the <i>couch.log</i> file.
+//! @brief This special handler writes logging messages directly into the `couch.log` file.
 //! @details It doens't handle debug messages, because this handler is always pushed to the logger. This handler logs
 //! info messages and errors.
 class CouchHandler extends AbstractProcessingHandler {
