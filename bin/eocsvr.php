@@ -2,8 +2,8 @@
 <?php
 
 //! @file eocsvr.php
-//! @brief Configure CouchDB <i>[query_servers]</i> section to run this script for php language as follows:
-//! <i>php=/opt/local/share/couchdb/server/eocsvr/bin/eocsvr.php</i>. This will run ElephantOnCouch Query Server for
+//! @brief Configure CouchDB `[query_servers]` section to run this script for php language as follows:
+//! `php=/opt/local/share/couchdb/server/eocsvr/bin/eocsvr.php`. This will run ElephantOnCouch Query Server for
 //! every document that uses PHP as language.
 //! @author Filippo F. Fadda
 
