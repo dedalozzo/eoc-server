@@ -155,6 +155,9 @@ final class Server {
   //! by JavaScript query server sucks.
   //! simply sucks.
   public function reduce($funcs, $keys, $values, $rereduce) {
+    $this->monolog->addDebug('keys: '.json_encode($keys));
+    $this->monolog->addDebug('values: '.json_encode($values));
+
     $closure = NULL; // This initialization is made just to prevent a lint error during development.
 
     $reductions = [];
