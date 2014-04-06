@@ -152,8 +152,7 @@ final class Server {
   //! @param[in] array $keys An array of mapped keys and document IDs in the form of [key, id].
   //! @param[in] array $values An array of mapped values.
   //! @warning This function ignores the value of `reduce_limit`, because the author thinks the algorithm used by
-  //! by JavaScript query server sucks.
-  //! simply sucks.
+  //! the JavaScript query server sucks.
   public function reduce($funcs, $keys, $values, $rereduce) {
     $closure = NULL; // This initialization is made just to prevent a lint error during development.
 
