@@ -1,12 +1,14 @@
 <?php
 
-//! @file CouchHandler.php
-//! @brief This file contains the CouchHandler class.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file CouchHandler.php
+ * @brief This file contains the CouchHandler class.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
-//! @brief This namespace contains the error handler.
+//! This namespace contains the error handler.
 namespace ElephantOnCouch\Handler;
 
 
@@ -16,23 +18,29 @@ use Monolog\Handler\AbstractProcessingHandler;
 use ElephantOnCouch\Server;
 
 
-//! @brief This special handler writes logging messages directly into the `couch.log` file.
-//! @details It doens't handle debug messages, because this handler is always pushed to the logger. This handler logs
-//! info messages and errors.
+/*
+ * @brief This special handler writes logging messages directly into the `couch.log` file.
+ * @details It doesn't handle debug messages, because this handler is always pushed to the logger. This handler logs
+ * info messages and errors.
+ */
 class CouchHandler extends AbstractProcessingHandler {
   private $server;
 
 
-  //! @brief Constructor.
-  //! @param[in] Server $server The ElephantOnCouch Query Server instance.
+  /**
+   * @brief Constructor.
+   * @param[in] Server $server The ElephantOnCouch Query Server instance.
+   */
   public function __construct(Server $server) {
     $this->server = $server;
     parent::__construct(Logger::INFO, TRUE);
   }
 
 
-  //! @brief Writes the record down to the log of the implementing handler
-  //! @param[in] array $record The log record to be written.
+  /**
+   * @brief Writes the record down to the log of the implementing handler
+   * @param[in] array $record The log record to be written.
+   */
   protected function write(array $record) {
 
     switch ($record['level']) {

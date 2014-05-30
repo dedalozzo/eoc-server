@@ -1,9 +1,11 @@
 <?php
 
-//! @file Server.php
-//! @brief This file contains the Server class.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file Server.php
+ * @brief This file contains the Server class.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 namespace ElephantOnCouch;
@@ -17,9 +19,12 @@ use Monolog\ErrorHandler;
 use Monolog\Handler\StreamHandler;
 
 
-//! @brief ElephantOnCouch Query Server main class.
-//! @warning This class won't work with CGI because uses standard input (STDIN) and standard output (STDOUT).
-//! @see http://wiki.apache.org/couchdb/View_server
+/**
+ * @brief ElephantOnCouch query server main class.
+ * @warning This class won't work with CGI because uses standard input (STDIN) and standard output (STDOUT).
+ * @see http://wiki.apache.org/couchdb/View_server
+ * @todo Handle the exceptions: see line 114.
+ */
 final class Server {
   const EXIT_SUCCESS = 0;
   const EXIT_FAILURE = 1;
@@ -34,10 +39,12 @@ final class Server {
   private $timeout; // Not used.
 
 
-  //! @brief Creates a Server instance.
-  //! @details To enable debug logging you must pass the log file name to the constructor, otherwise high level info and
-  //! errors are saved on the `couch.log` file.
-  //! @param[in] string $fileName The complete log file path.
+  /**
+   * @brief Creates a Server instance.
+   * @details To enable debug logging you must pass the log file name to the constructor, otherwise high level info and
+   * errors are saved on the `couch.log` file.
+   * @param[in] string $fileName The complete log file path.
+   */
   public function __construct($fileName = "") {
     // Creates a Monolog instance.
     $this->monolog = new Logger('eocsvr');
@@ -59,14 +66,18 @@ final class Server {
   }
 
 
-  //! @brief Destroy the Server instance previously created.
+  /**
+   * @brief Destroy the Server instance previously created.
+   */
   public function __destruct() {
   }
 
 
-  //! @brief Initializes the commands list.
-  //! @details CouchDB communicates with a Query Server over standard input/output. Each line represents a command.
-  //! Every single command must be interpreted and executed by a specific command handler.
+  /**
+   * @brief Initializes the commands list.
+   * @details CouchDB communicates with a Query Server over standard input/output. Each line represents a command.
+   * Every single command must be interpreted and executed by a specific command handler.
+   */
   private function loadCommands() {
     $this->commands[Command\AddFunCmd::getName()] = Command\AddFunCmd::getClass();
     $this->commands[Command\MapDocCmd::getName()] = Command\MapDocCmd::getClass();
@@ -76,7 +87,9 @@ final class Server {
   }
 
 
-  //! @brief Starts the server.
+  /**
+   * @brief Starts the server.
+   */
   public function run() {
     $this->monolog->addDebug("RUN");
 
@@ -112,8 +125,10 @@ final class Server {
   }
 
 
-  //! @brief Sends a response to CouchDB via standard output.
-  //! @param[in] string $str The string to send.
+  /**
+   * @brief Sends a response to CouchDB via standard output.
+   * @param[in] string $str The string to send.
+   */
   public function writeln($str) {
     // CouchDB's message terminator is: \n.
     fputs(STDOUT, $str."\n");
@@ -121,38 +136,47 @@ final class Server {
   }
 
 
-  //! @brief Resets the array of the functions.
+  /**
+   * @brief Resets the array of the functions.
+   */
   public function resetFuncs() {
     unset($this->funcs);
     $this->funcs = [];
   }
 
 
-  //! @brief Returns the array of the functions.
+  /**
+   * @brief Returns the array of the functions.
+   */
   public function getFuncs() {
     return $this->funcs;
   }
 
 
-  //! @brief Add the given function to the internal functions' list.
-  //! @param[in] string $fn The function implementation.
+  /**
+   * @brief Add the given function to the internal functions' list.
+   * @param[in] string $fn The function implementation.
+   */
   public function addFunc($fn) {
     $this->funcs[] = $fn;
   }
 
 
-  //! @brief The Map step generates a set of key/valu pairs which can then optionally be reduced to a single value - or
-  //! to a grouping of values - in the Reduce step.
-  //! @details If a view has a reduce function, it is used to produce aggregate results for that view. A reduce function
-  //! is passed a set of intermediate values and combines them to a single value. Reduce functions must accept, as input,
-  //! results emitted by its corresponding map function as well as results returned by the reduce function itself. The
-  //! latter case is referred to as a rereduce.<br />
-  //! This function is called by commands ReduceCmd and RereduceCmd.
-  //! @param[in] array $funcs An array of reduce functions.
-  //! @param[in] array $keys An array of mapped keys and document IDs in the form of [key, id].
-  //! @param[in] array $values An array of mapped values.
-  //! @warning This function ignores the value of `reduce_limit`, because the author thinks the algorithm used by
-  //! the JavaScript query server sucks.
+  /**
+   * @brief The Map step generates a set of key/valu pairs which can then optionally be reduced to a single value - or
+   * to a grouping of values - in the Reduce step.
+   * @details If a view has a reduce function, it is used to produce aggregate results for that view. A reduce function
+   * is passed a set of intermediate values and combines them to a single value. Reduce functions must accept, as input,
+   * results emitted by its corresponding map function as well as results returned by the reduce function itself. The
+   * latter case is referred to as a rereduce.\n
+   * This function is called by commands ReduceCmd and RereduceCmd.
+   * @param[in] array $funcs An array of reduce functions.
+   * @param[in] array $keys An array of mapped keys and document IDs in the form of [key, id].
+   * @param[in] array $values An array of mapped values.
+   * @param[in] bool $rereduce When `true` the values will be reduced again.
+   * @warning This function ignores the value of `reduce_limit`, because the author thinks the algorithm used by
+   * the JavaScript query server sucks.
+   */
   public function reduce($funcs, $keys, $values, $rereduce) {
     $closure = NULL; // This initialization is made just to prevent a lint error during development.
 
@@ -175,61 +199,75 @@ final class Server {
   }
 
 
-  //! @brief Tells CouchDB to append the specified message in the couch.log file.
-  //! @details Any message will appear in the couch.log file, as follows:
-  //!   [Tue, 22 May 2012 15:26:03 GMT] [info] [<0.80.0>] This is a log message
-  //! You can't force the message's level. Every message will be marked as [info] even in case of an error, because
-  //! CouchDB doesn't let you specify a different level. In case or error use error(), forbidden() or unauthorized()
-  //! instead.
-  //! @warning Keep in mind that you can't use this method inside reset() or addFun(), because you are going to
-  //! generate an error. CouchDB in fact doesn't expect a message when it sends `reset` or `add_fun` commands.
-  //! @param[in] string $msg The message to log.
+  /**
+   * @brief Tells CouchDB to append the specified message in the couch.log file.
+   * @details Any message will appear in the couch.log file, as follows:
+   *   [Tue, 22 May 2012 15:26:03 GMT] [info] [<0.80.0>] This is a log message
+   * You can't force the message's level. Every message will be marked as [info] even in case of an error, because
+   * CouchDB doesn't let you specify a different level. In case or error use error(), forbidden() or unauthorized()
+   * instead.
+   * @warning Keep in mind that you can't use this method inside reset() or addFun(), because you are going to
+   * generate an error. CouchDB in fact doesn't expect a message when it sends `reset` or `add_fun` commands.
+   * @param[in] string $msg The message to log.
+   */
   public function log($msg) {
     $this->writeln(json_encode(["log", $msg]));
   }
 
 
-  //! @brief In case of error CouchDB doesn't take any action. We simply notify the error, sending a special message to it.
-  //! @param[in] string $error The error keyword.
-  //! @param[in] string $reason The error message.
+  /**
+   * @brief In case of error CouchDB doesn't take any action. We simply notify the error, sending a special message to it.
+   * @param[in] string $error The error keyword.
+   * @param[in] string $reason The error message.
+   */
   public function error($keyword, $reason) {
     $this->writeln(json_encode(["error", $keyword, $reason]));
   }
 
 
-  //! @brief The forbidden error are widely used by validate document update functions to stop further function processing
-  //! and prevent on disk store of the new document version.
-  //! @details Since this errors actually is not an error, but an assertion against user actions, CouchDB doesn't log it
-  //! at “error” level, but returns HTTP 403 Forbidden response with error information object.
-  //! @param[in] string $reason The error message.
+  /**
+   * @brief The forbidden error are widely used by validate document update functions to stop further function processing
+   * and prevent on disk store of the new document version.
+   * @details Since this errors actually is not an error, but an assertion against user actions, CouchDB doesn't log it
+   * at “error” level, but returns HTTP 403 Forbidden response with error information object.
+   * @param[in] string $reason The error message.
+   */
   public function forbidden($reason) {
     $this->writeln(json_encode(["forbidden" => $reason]));
   }
 
 
-  //! @brief The unauthorized error mostly acts like forbidden one, but with semantic as please authorize first.
-  //! @details CouchDB doesn't log it at “error” level, but returns HTTP 401 Unauthorized response with error information
-  //! object.
-  //! @param[in] string $reason The error message.
+  /**
+   * @brief The unauthorized error mostly acts like forbidden one, but with semantic as please authorize first.
+   * @details CouchDB doesn't log it at “error” level, but returns HTTP 401 Unauthorized response with error information
+   * object.
+   * @param[in] string $reason The error message.
+   */
   public function unauthorized($reason) {
     $this->writeln(json_encode(["unauthorized" => $reason]));
   }
 
 
-  //! @brief Gets the logger instance.
+  /**
+   * @brief Gets the logger instance.
+   */
   public function getMonolog() {
     return $this->monolog;
   }
 
 
-  //! @brief Sets the limit of times a reduce function can be called.
-  //! @warning Actually `reduce_limit` config option is a boolean.
+  /**
+   * @brief Sets the limit of times a reduce function can be called.
+   * @warning Actually `reduce_limit` config option is a boolean.
+   */
   public function setReduceLimit($value) {
     $this->reduceLimit = $value;
   }
 
 
-  //! @brief Sets the timeout for the reduce process.
+  /**
+   * @brief Sets the timeout for the reduce process.
+   */
   public function setTimeout($value) {
     $this->timeout = (integer)$value;
   }

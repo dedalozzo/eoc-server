@@ -1,9 +1,11 @@
 <?php
 
-//! @file CmdTrait.php
-//! @brief This file contains the CmdTrait class.
-//! @details
-//! @author Filippo F. Fadda
+/**
+ * @file CmdTrait.php
+ * @brief This file contains the CmdTrait class.
+ * @details
+ * @author Filippo F. Fadda
+ */
 
 
 namespace ElephantOnCouch\Command;
