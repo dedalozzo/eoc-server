@@ -202,7 +202,9 @@ final class Server {
   /**
    * @brief Tells CouchDB to append the specified message in the couch.log file.
    * @details Any message will appear in the couch.log file, as follows:
-   *   [Tue, 22 May 2012 15:26:03 GMT] [info] [<0.80.0>] This is a log message
+   @code
+     [Tue, 22 May 2012 15:26:03 GMT] [info] [<0.80.0>] This is a log message
+   @endcode
    * You can't force the message's level. Every message will be marked as [info] even in case of an error, because
    * CouchDB doesn't let you specify a different level. In case or error use error(), forbidden() or unauthorized()
    * instead.
