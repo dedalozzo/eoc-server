@@ -64,8 +64,8 @@ php=/opt/local/share/couchdb/server/eocsvr/bin/eocsvr.php
 Usage
 -----
 To benefit of ElephantOnCouch Server you must use [ElephantOnCouch Client](https://github.com/dedalozzo/eoc-client), a PHP client for CouchDB.
-Using [ElephantOnCouch Client](https://github.com/dedalozzo/eoc-client) you can interact with CouchDB, and you can write your views directly in PHP.
-You don't need to know about CouchDB internals, neither JSON, just learn [ElephantOnCouch Client](https://github.com/dedalozzo/eoc-client) and use it.
+Using ElephantOnCouch Client, you can interact with CouchDB, and you can write your views directly in PHP.
+You don't need to know about CouchDB internals, neither JSON, just learn ElephantOnCouch Client and use it.
 All you need is to learn the MapReduce concept and an high level guide on CouchDB.
 
 
