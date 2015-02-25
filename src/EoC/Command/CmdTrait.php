@@ -8,7 +8,7 @@
  */
 
 
-namespace ElephantOnCouch\Command;
+namespace EoC\Command;
 
 
 trait CmdTrait {

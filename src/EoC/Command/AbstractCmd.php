@@ -9,10 +9,10 @@
 
 
 //! This namespace contains all the available concrete commands.
-namespace ElephantOnCouch\Command;
+namespace EoC\Command;
 
 
-use ElephantOnCouch\Server;
+use EoC\Server;
 
 
 /*

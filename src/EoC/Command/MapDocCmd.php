@@ -9,7 +9,7 @@
  */
 
 
-namespace ElephantOnCouch\Command;
+namespace EoC\Command;
 
 
 /**

@@ -8,11 +8,11 @@
  */
 
 
-namespace ElephantOnCouch;
+namespace EoC;
 
 
-use ElephantOnCouch\Command;
-use ElephantOnCouch\Handler\CouchHandler;
+use EoC\Command;
+use EoC\Handler\CouchHandler;
 
 use Monolog\Logger;
 use Monolog\ErrorHandler;

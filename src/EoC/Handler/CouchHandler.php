@@ -9,13 +9,13 @@
 
 
 //! This namespace contains the error handler.
-namespace ElephantOnCouch\Handler;
+namespace EoC\Handler;
 
 
 use Monolog\Logger;
 use Monolog\Handler\AbstractProcessingHandler;
 
-use ElephantOnCouch\Server;
+use EoC\Server;
 
 
 /*
