@@ -1,3 +1,9 @@
+[![Latest Stable Version](https://poser.pugx.org/3f/eoc-server/v/stable.png)](https://packagist.org/packages/3f/eoc-server)
+[![Latest Unstable Version](https://poser.pugx.org/3f/eoc-server/v/unstable.png)](https://packagist.org/packages/3f/eoc-server)
+[![License](https://poser.pugx.org/3f/eoc-server/license.svg)](https://packagist.org/packages/3f/eoc-server)
+[![Total Downloads](https://poser.pugx.org/3f/eoc-server/downloads.png)](https://packagist.org/packages/3f/eoc-server)
+
+
 Elephant on Couch Server
 ========================
 EoC Server is a CouchDB's Query Server implementation made in PHP programming language.
