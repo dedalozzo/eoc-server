@@ -219,7 +219,7 @@ final class Server {
 
   /**
    * @brief In case of error CouchDB doesn't take any action. We simply notify the error, sending a special message to it.
-   * @param[in] string $error The error keyword.
+   * @param[in] string $keyword The error keyword.
    * @param[in] string $reason The error message.
    */
   public function error($keyword, $reason) {
