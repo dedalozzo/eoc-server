@@ -19,7 +19,7 @@ interface CmdInterface {
 
   /**
    * @brief Returns the command's name.
-   * @retval string
+   * @return string
    */
   static function getName();
 
@@ -28,14 +28,14 @@ interface CmdInterface {
    * @brief Returns the complete class name, including his namespace.
    * @details The implementation must return simply __CLASS__. The CmdTrait already implements this method, and it is
    * available to all AbstractCmd subclasses.
-   * @retval string
+   * @return string
    */
   static function getClass();
 
 
   /**
    * @brief Executes the command.
-   * @retval string
+   * @return string
    */
   function execute();
 
