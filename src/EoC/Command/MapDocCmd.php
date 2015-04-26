@@ -40,7 +40,7 @@ final class MapDocCmd extends AbstractCmd {
 
 
   // @brief Converts the array to an object.
-  // @return object
+  // @retval object
   public static function arrayToObject($array) {
     return is_array($array) ? (object)array_map(__METHOD__, $array) : $array;
   }
