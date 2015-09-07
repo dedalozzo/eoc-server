@@ -23,7 +23,6 @@ use Monolog\Handler\StreamHandler;
  * @brief ElephantOnCouch query server main class.
  * @warning This class won't work with CGI because uses standard input (STDIN) and standard output (STDOUT).
  * @see http://wiki.apache.org/couchdb/View_server
- * @todo Handle the exceptions: see line 114.
  */
 final class Server {
   const EXIT_SUCCESS = 0;
@@ -112,8 +111,8 @@ final class Server {
           $cmdObj->execute();
         }
         catch (\Exception $e) {
-          //$this->error('runtime_error', $e->getMessage());
-          //exit(Server::EXIT_FAILURE);
+          $this->monolog->addCritical($e->getMessage());
+          exit(Server::EXIT_FAILURE);
         }
       }
       else {
@@ -209,7 +208,7 @@ final class Server {
    * CouchDB doesn't let you specify a different level. In case or error use error(), forbidden() or unauthorized()
    * instead.
    * @warning Keep in mind that you can't use this method inside reset() or addFun(), because you are going to
-   * generate an error. CouchDB in fact doesn't expect a message when it sends `reset` or `add_fun` commands.
+   * generate an error. CouchDB, in fact, does not expect a message when it sends `reset` or `add_fun` commands.
    * @param[in] string $msg The message to log.
    */
   public function log($msg) {
