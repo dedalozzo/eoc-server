@@ -1,5 +1,7 @@
 [![Latest Stable Version](https://poser.pugx.org/3f/eoc-server/v/stable.png)](https://packagist.org/packages/3f/eoc-server)
 [![Latest Unstable Version](https://poser.pugx.org/3f/eoc-server/v/unstable.png)](https://packagist.org/packages/3f/eoc-server)
+[![Build Status](https://scrutinizer-ci.com/g/dedalozzo/eoc-server/badges/build.png?b=master)](https://scrutinizer-ci.com/g/dedalozzo/eoc-server/build-status/master)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/dedalozzo/eoc-server/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/dedalozzo/eoc-server/?branch=master)
 [![License](https://poser.pugx.org/3f/eoc-server/license.svg)](https://packagist.org/packages/3f/eoc-server)
 [![Total Downloads](https://poser.pugx.org/3f/eoc-server/downloads.png)](https://packagist.org/packages/3f/eoc-server)
 
